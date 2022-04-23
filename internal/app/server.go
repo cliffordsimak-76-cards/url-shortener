@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"net/http"
 	"path"
@@ -28,6 +30,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("запросили URL: %s", r.URL)
+	fmt.Printf("url path: %s", r.URL.Path)
 	_, shortURL := path.Split(r.URL.Path)
 	if shortURL == "" {
 		BadReQuestHandler(w, r)
@@ -39,25 +43,29 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 		BadReQuestHandler(w, r)
 	}
 
+	fmt.Printf("я вернул полный сайт: %s", URL)
 	http.Redirect(w, r, URL, http.StatusTemporaryRedirect)
 }
 
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
+	fmt.Printf("прислали: %s", string(body))
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 	w.Header().Set("content-type", "text/plain")
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(generateShortURL(string(body))))
+	link := generateShortURL(string(body))
+	fmt.Printf("я вернул: %s", link)
+	w.Write([]byte(link))
 }
 
 func generateShortURL(URL string) string {
 	if value, found := URLsByID[URL]; found {
 		return value
 	}
-	shortURL := URL
+	shortURL := uuid.New().String()
 	URLsByID[shortURL] = URL
 	return shortURL
 }
