@@ -1,16 +1,15 @@
 package app
 
 import (
+	"github.com/google/uuid"
 	"io"
 	"net/http"
 	"path"
-	"strconv"
 )
 
 const port = ":8080"
 
-var URLsByID = map[int]string{}
-var index int
+var URLsByID = map[string]string{}
 
 func Run() error {
 	http.HandleFunc("/", HandleRequest)
@@ -36,13 +35,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id_input, err := strconv.Atoi(shortURL)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	URL, found := URLsByID[id_input]
+	URL, found := URLsByID[shortURL]
 	if !found {
 		BadReQuestHandler(w, r)
 	}
@@ -59,24 +52,16 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("content-type", "text/plain")
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(strconv.Itoa(generateShortURL(string(body)))))
+	w.Write([]byte(generateShortURL(string(body))))
 }
 
-func generateShortURL(URL string) int {
-	//id_input, err := strconv.Atoi(URL)
-	//if err != nil {
-	//	//w.WriteHeader(http.StatusBadRequest)
-	//	//	return
-	//}
-	//if value, found := URLsByID[id_input]; found {
-	//	return value
-	//}
-	//shortURL := uuid.New().String()
-	//URLsByID[shortURL] = URL
-
-	index = len(URLsByID)
-	URLsByID[index] = URL
-	return index
+func generateShortURL(URL string) string {
+	if value, found := URLsByID[URL]; found {
+		return value
+	}
+	shortURL := uuid.New().String()
+	URLsByID[shortURL] = URL
+	return shortURL
 }
 
 func BadReQuestHandler(w http.ResponseWriter, r *http.Request) {
