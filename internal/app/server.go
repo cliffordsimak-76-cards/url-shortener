@@ -8,6 +8,7 @@ import (
 )
 
 const port = ":8080"
+const host = "http://localhost:8080/"
 
 var URLsByID = map[string]string{}
 
@@ -58,9 +59,9 @@ func generateShortURL(URL string) string {
 	if value, found := URLsByID[URL]; found {
 		return value
 	}
-	shortURL := uuid.New().String()
-	URLsByID[shortURL] = URL
-	return shortURL
+	urlIdentifier := uuid.New().String()
+	URLsByID[urlIdentifier] = URL
+	return host + urlIdentifier
 }
 
 func BadReQuestHandler(w http.ResponseWriter, r *http.Request) {
