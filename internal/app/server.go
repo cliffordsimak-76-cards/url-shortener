@@ -40,8 +40,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 		BadReQuestHandler(w, r)
 	}
 
-	w.Header().Set("Location", URL)
-	w.WriteHeader(http.StatusTemporaryRedirect)
+	http.Redirect(w, r, URL, http.StatusTemporaryRedirect)
 }
 
 func PostHandler(w http.ResponseWriter, r *http.Request) {
