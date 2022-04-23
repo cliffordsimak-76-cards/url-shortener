@@ -8,7 +8,7 @@ import (
 	"path"
 )
 
-const host = "localhost"
+const host = "http://localhost"
 const port = ":8080"
 
 var URLsByID = map[string]string{}
