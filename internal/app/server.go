@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/google/uuid"
 	"io"
 	"net/http"
 	"path"
@@ -58,7 +57,7 @@ func generateShortURL(URL string) string {
 	if value, found := URLsByID[URL]; found {
 		return value
 	}
-	shortURL := uuid.New().String()
+	shortURL := URL
 	URLsByID[shortURL] = URL
 	return shortURL
 }
