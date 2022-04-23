@@ -9,7 +9,7 @@ import (
 
 const port = ":8080"
 
-var URLsByID = map[string]string{}
+var urlsByID = map[string]string{}
 
 func Run() error {
 	http.HandleFunc("/", HandleRequest)
@@ -29,18 +29,18 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetHandler(w http.ResponseWriter, r *http.Request) {
-	_, shortURL := path.Split(r.URL.Path)
-	if shortURL == "" {
+	_, shortUrl := path.Split(r.URL.Path)
+	if shortUrl == "" {
 		BadReQuestHandler(w, r)
 		return
 	}
 
-	URL, found := URLsByID[shortURL]
+	url, found := urlsByID[shortUrl]
 	if !found {
 		BadReQuestHandler(w, r)
 	}
 
-	http.Redirect(w, r, URL, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func PostHandler(w http.ResponseWriter, r *http.Request) {
@@ -51,16 +51,16 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("content-type", "text/plain")
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(generateShortURL(string(body))))
+	w.Write([]byte(generateShortUrl(string(body))))
 }
 
-func generateShortURL(URL string) string {
-	if value, found := URLsByID[URL]; found {
+func generateShortUrl(url string) string {
+	if value, found := urlsByID[url]; found {
 		return value
 	}
-	shortURL := uuid.New().String()
-	URLsByID[shortURL] = URL
-	return shortURL
+	shorUrl := uuid.New().String()
+	urlsByID[shorUrl] = url
+	return shorUrl
 }
 
 func BadReQuestHandler(w http.ResponseWriter, r *http.Request) {
