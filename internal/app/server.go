@@ -8,6 +8,7 @@ import (
 	"path"
 )
 
+const host = "localhost"
 const port = ":8080"
 
 var URLsByID = map[string]string{}
@@ -30,8 +31,8 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("запросили URL: %s", r.URL)
-	fmt.Printf("url path: %s", r.URL.Path)
+	fmt.Printf("запросили URL: %s\n", r.URL)
+	fmt.Printf("url path: %s\n", r.URL.Path)
 	_, shortURL := path.Split(r.URL.Path)
 	if shortURL == "" {
 		BadReQuestHandler(w, r)
@@ -49,7 +50,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	fmt.Printf("прислали: %s", string(body))
+	fmt.Printf("прислали: %s\n", string(body))
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -57,7 +58,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/plain")
 	w.WriteHeader(http.StatusCreated)
 	link := generateShortURL(string(body))
-	fmt.Printf("я вернул: %s", link)
+	fmt.Printf("я вернул: %s\n", link)
 	w.Write([]byte(link))
 }
 
@@ -65,8 +66,9 @@ func generateShortURL(URL string) string {
 	if value, found := URLsByID[URL]; found {
 		return value
 	}
-	shortURL := uuid.New().String()
-	URLsByID[shortURL] = URL
+	guid := uuid.New().String()
+	shortURL := host + port + "/" + guid
+	URLsByID[guid] = URL
 	return shortURL
 }
 
