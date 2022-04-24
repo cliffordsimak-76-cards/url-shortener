@@ -7,17 +7,17 @@ import (
 
 const host = "http://localhost:8080/"
 
-type HttpHandler struct {
-	urlRepository repository.UrlRepository
+type HTTPHandler struct {
+	urlRepository repository.URLRepository
 }
 
-func NewHttpHandler(urlRepository repository.UrlRepository) *HttpHandler {
-	return &HttpHandler{
+func NewHTTPHandler(urlRepository repository.URLRepository) *HTTPHandler {
+	return &HTTPHandler{
 		urlRepository: urlRepository,
 	}
 }
 
-func (h *HttpHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
+func (h *HTTPHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		h.getURL(w, r)

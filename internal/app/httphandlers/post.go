@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (h *HttpHandler) postURL(w http.ResponseWriter, r *http.Request) {
+func (h *HTTPHandler) postURL(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		badRequest(w, err.Error())

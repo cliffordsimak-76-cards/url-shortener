@@ -36,6 +36,7 @@ func TestPostURL(t *testing.T) {
 			h := http.HandlerFunc(te.httpHandler.postURL)
 			h.ServeHTTP(rec, req)
 			result := rec.Result()
+			defer result.Body.Close()
 
 			if result.StatusCode != tt.want.code {
 				t.Errorf("Expected status code %d, got %d", tt.want.code, rec.Code)

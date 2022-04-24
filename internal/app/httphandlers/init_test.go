@@ -6,15 +6,15 @@ import (
 )
 
 type testEnv struct {
-	urlRepository repository.UrlRepository
-	httpHandler   *HttpHandler
+	urlRepository repository.URLRepository
+	httpHandler   *HTTPHandler
 }
 
 func newTestEnv(t *testing.T) *testEnv {
 	te := &testEnv{}
 
-	te.urlRepository = repository.NewUrlRepository()
-	te.httpHandler = NewHttpHandler(
+	te.urlRepository = repository.NewURLRepository()
+	te.httpHandler = NewHTTPHandler(
 		te.urlRepository,
 	)
 	return te

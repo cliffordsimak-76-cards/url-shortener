@@ -8,7 +8,7 @@ type DB struct {
 	urlRepository map[string]string
 }
 
-func NewUrlRepository() *DB {
+func NewURLRepository() *DB {
 	return &DB{
 		urlRepository: make(map[string]string),
 	}

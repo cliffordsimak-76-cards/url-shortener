@@ -41,6 +41,7 @@ func TestGetURL(t *testing.T) {
 			h := http.HandlerFunc(te.httpHandler.getURL)
 			h.ServeHTTP(rec, req)
 			result := rec.Result()
+			defer result.Body.Close()
 
 			te.urlRepository.Create("a506e095-b901-47db-8b8f-b23f9b1b9e1b", "https://www.yandex.ru")
 

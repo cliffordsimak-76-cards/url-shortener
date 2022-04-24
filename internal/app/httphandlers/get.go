@@ -6,7 +6,7 @@ import (
 	"path"
 )
 
-func (h *HttpHandler) getURL(w http.ResponseWriter, r *http.Request) {
+func (h *HTTPHandler) getURL(w http.ResponseWriter, r *http.Request) {
 	_, urlIdentifier := path.Split(r.URL.Path)
 	if urlIdentifier == "" {
 		badRequest(w, "no URL identifier")
