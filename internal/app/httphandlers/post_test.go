@@ -1,6 +1,9 @@
 package httphandlers
 
 import (
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -30,16 +33,15 @@ func TestPostURL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
+			e := echo.New()
 			req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(tt.value))
 			rec := httptest.NewRecorder()
-			h := http.HandlerFunc(te.httpHandler.postURL)
-			h.ServeHTTP(rec, req)
-			result := rec.Result()
-			defer result.Body.Close()
+			ctx := e.NewContext(req, rec)
 
-			if result.StatusCode != tt.want.code {
-				t.Errorf("Expected status code %d, got %d", tt.want.code, rec.Code)
+			h := te.httpHandler.Post()
+			if assert.NoError(t, h(ctx)) {
+				require.Equal(t, tt.want.code, rec.Code)
+				require.NotNil(t, rec.Body.String())
 			}
 		})
 	}

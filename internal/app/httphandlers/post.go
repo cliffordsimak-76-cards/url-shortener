@@ -2,25 +2,25 @@ package httphandlers
 
 import (
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 	"io"
 	"net/http"
 )
 
-func (h *HTTPHandler) postURL(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		badRequest(w, err.Error())
-		return
-	}
-	if len(body) == 0 {
-		badRequest(w, "body is empty")
-		return
-	}
+func (h *HTTPHandler) Post() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		body, err := io.ReadAll(c.Request().Body)
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		if len(body) == 0 {
+			return c.String(http.StatusBadRequest, "body is empty")
+		}
 
-	urlIdentifier := uuid.New().String()
-	shortURL := host + urlIdentifier
-	h.urlRepository.Create(urlIdentifier, string(body))
+		urlIdentifier := uuid.New().String()
+		shortURL := host + urlIdentifier
+		h.urlRepository.Create(urlIdentifier, string(body))
 
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(shortURL))
+		return c.String(http.StatusCreated, shortURL)
+	}
 }
