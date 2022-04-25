@@ -7,6 +7,6 @@ import (
 
 func main() {
 	if err := app.Run(); err != nil {
-		log.Fatal("error running server ", err)
+		log.Fatal("error running server", err)
 	}
 }
