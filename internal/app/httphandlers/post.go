@@ -13,7 +13,7 @@ func (h *HTTPHandler) postURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(body) == 0 {
-		badRequest(w, "")
+		badRequest(w, "body is empty")
 		return
 	}
 
