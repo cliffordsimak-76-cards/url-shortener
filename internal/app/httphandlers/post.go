@@ -17,9 +17,9 @@ func (h *HTTPHandler) Post() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "body is empty")
 		}
 
-		urlIdentifier := uuid.New().String()
-		shortURL := host + urlIdentifier
-		h.urlRepository.Create(urlIdentifier, string(body))
+		urlID := uuid.New().String()
+		shortURL := host + urlID
+		h.urlRepository.Create(urlID, string(body))
 
 		return c.String(http.StatusCreated, shortURL)
 	}
