@@ -8,7 +8,7 @@ import (
 )
 
 type Request struct {
-	Url string `json:"url"`
+	URL string `json:"url"`
 }
 
 type Response struct {
@@ -22,8 +22,8 @@ func (h *HTTPHandler) Shorten() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		shortURL := converter.StringToMD5(request.Url)
-		err := h.urlRepository.Create(shortURL, request.Url)
+		shortURL := converter.StringToMD5(request.URL)
+		err := h.urlRepository.Create(shortURL, request.URL)
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error create")
 		}
