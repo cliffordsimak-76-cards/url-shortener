@@ -15,6 +15,7 @@ func Run() error {
 	e := echo.New()
 	e.GET("/:id", httpHandler.Get())
 	e.POST("/", httpHandler.Post())
+	e.POST("/api/shorten", httpHandler.Shorten())
 
 	e.Logger.Fatal(e.Start(port))
 
