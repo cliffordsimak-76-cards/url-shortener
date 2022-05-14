@@ -14,8 +14,9 @@ func NewURLRepository() *DB {
 	}
 }
 
-func (d *DB) Create(id string, url string) {
+func (d *DB) Create(id string, url string) error {
 	d.urlRepository[id] = url
+	return nil
 }
 
 func (d *DB) Get(id string) (string, error) {

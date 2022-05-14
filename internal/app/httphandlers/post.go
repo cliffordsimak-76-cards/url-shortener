@@ -19,7 +19,10 @@ func (h *HTTPHandler) Post() echo.HandlerFunc {
 
 		urlIdentifier := uuid.New().String()
 		shortURL := host + urlIdentifier
-		h.urlRepository.Create(urlIdentifier, string(body))
+		err = h.urlRepository.Create(urlIdentifier, string(body))
+		if err != nil {
+			return c.String(http.StatusBadRequest, "error create")
+		}
 
 		return c.String(http.StatusCreated, shortURL)
 	}
