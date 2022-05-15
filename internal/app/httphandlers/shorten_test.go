@@ -2,19 +2,18 @@ package httphandlers
 
 import (
 	"bytes"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
 func TestShorten(t *testing.T) {
 	te := newTestEnv(t)
-	type want struct {
-		code int
-	}
 	tests := []struct {
 		name     string
 		request  []byte
@@ -39,12 +38,20 @@ func TestShorten(t *testing.T) {
 			rec := httptest.NewRecorder()
 			ctx := e.NewContext(req, rec)
 
-			h := te.httpHandler.Shorten()
+			cfg := getConfig()
+			h := te.httpHandler.Shorten(cfg)
 			if assert.NoError(t, h(ctx)) {
 				require.Equal(t, tt.code, rec.Code)
 				compareMessage(t, tt.response, rec.Body.Bytes())
 			}
 		})
+	}
+}
+
+func getConfig() *config.Config {
+	return &config.Config{
+		BaseURL:       os.Getenv("BASE_URL"),
+		ServerAddress: os.Getenv("SERVER_ADDRESS"),
 	}
 }
 
