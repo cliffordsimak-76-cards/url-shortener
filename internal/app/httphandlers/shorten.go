@@ -31,7 +31,11 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 
 		c.Response().Header().Set("Content-Type", "application/json")
 		return c.JSON(http.StatusCreated, Response{
-			Result: cfg.BaseURL + shortURL,
+			Result: makeResultString(cfg.BaseURL, shortURL),
 		})
 	}
+}
+
+func makeResultString(baseURL string, shortURL string) string {
+	return baseURL + "/" + shortURL
 }
