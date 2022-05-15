@@ -8,8 +8,18 @@ import (
 )
 
 func Run(cfg *config.Config) error {
-	urlRepository := repository.NewInMemory()
-	httpHandler := httphandlers.NewHTTPHandler(urlRepository)
+	var repo repository.Repository
+	var err error
+
+	if cfg.FileStoragePath != "" {
+		repo, err = repository.NewInFile(cfg.FileStoragePath)
+		if err != nil {
+			return err
+		}
+	} else {
+		repo = repository.NewInMemory()
+	}
+	httpHandler := httphandlers.NewHTTPHandler(repo)
 
 	e := echo.New()
 	e.GET("/:id", httpHandler.Get())

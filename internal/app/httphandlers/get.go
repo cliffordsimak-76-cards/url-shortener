@@ -8,7 +8,7 @@ import (
 
 func (h *HTTPHandler) Get() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		URL, err := h.urlRepository.Get(c.Param("id"))
+		URL, err := h.repository.Get(c.Param("id"))
 		if err != nil {
 			return c.String(http.StatusBadRequest, fmt.Errorf("error get URL: %s", err).Error())
 		}

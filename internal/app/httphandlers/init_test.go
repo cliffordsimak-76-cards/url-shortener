@@ -6,16 +6,16 @@ import (
 )
 
 type testEnv struct {
-	urlRepository repository.Storage
-	httpHandler   *HTTPHandler
+	inMemoryRepo repository.Repository
+	httpHandler  *HTTPHandler
 }
 
 func newTestEnv(t *testing.T) *testEnv {
 	te := &testEnv{}
 
-	te.urlRepository = repository.NewInMemory()
+	te.inMemoryRepo = repository.NewInMemory()
 	te.httpHandler = NewHTTPHandler(
-		te.urlRepository,
+		te.inMemoryRepo,
 	)
 	return te
 }

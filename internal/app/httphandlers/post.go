@@ -21,7 +21,7 @@ func (h *HTTPHandler) Post(cfg *config.Config) echo.HandlerFunc {
 
 		urlIdentifier := uuid.New().String()
 		shortURL := utils.MakeResultString(cfg.BaseURL, urlIdentifier)
-		err = h.urlRepository.Create(urlIdentifier, string(body))
+		err = h.repository.Create(urlIdentifier, string(body))
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error create")
 		}

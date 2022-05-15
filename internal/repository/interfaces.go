@@ -2,7 +2,7 @@ package repository
 
 import "errors"
 
-type Storage interface {
+type Repository interface {
 	Create(id string, url string) error
 	Get(id string) (string, error)
 }

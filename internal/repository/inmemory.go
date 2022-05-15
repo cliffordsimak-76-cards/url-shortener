@@ -1,25 +1,25 @@
 package repository
 
 type InMemory struct {
-	urlRepository map[string]string
+	cache map[string]string
 }
 
-func NewInMemory() Storage {
+func NewInMemory() Repository {
 	return &InMemory{
-		urlRepository: make(map[string]string),
+		cache: make(map[string]string),
 	}
 }
 
 func (s *InMemory) Create(id string, url string) error {
-	if _, ok := s.urlRepository[id]; ok {
+	if _, ok := s.cache[id]; ok {
 		return ErrAlreadyExists
 	}
-	s.urlRepository[id] = url
+	s.cache[id] = url
 	return nil
 }
 
 func (s *InMemory) Get(id string) (string, error) {
-	URL, ok := s.urlRepository[id]
+	URL, ok := s.cache[id]
 	if !ok {
 		return "", ErrNotFound
 	}

@@ -47,7 +47,7 @@ func TestGet(t *testing.T) {
 			ctx.SetParamNames("id")
 			ctx.SetParamValues(tt.value)
 
-			te.urlRepository.Create("a506e095-b901-47db-8b8f-b23f9b1b9e1b", "https://www.yandex.ru")
+			te.inMemoryRepo.Create("a506e095-b901-47db-8b8f-b23f9b1b9e1b", "https://www.yandex.ru")
 
 			h := te.httpHandler.Get()
 			if assert.NoError(t, h(ctx)) {

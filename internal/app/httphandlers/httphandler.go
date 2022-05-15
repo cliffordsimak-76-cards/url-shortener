@@ -5,11 +5,11 @@ import (
 )
 
 type HTTPHandler struct {
-	urlRepository repository.Storage
+	repository repository.Repository
 }
 
-func NewHTTPHandler(urlRepository repository.Storage) *HTTPHandler {
+func NewHTTPHandler(repository repository.Repository) *HTTPHandler {
 	return &HTTPHandler{
-		urlRepository: urlRepository,
+		repository: repository,
 	}
 }

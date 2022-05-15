@@ -2,8 +2,10 @@ package httphandlers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -24,7 +26,10 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 		}
 
 		urlIdentifier := utils.StringToMD5(request.URL)
-		err := h.urlRepository.Create(urlIdentifier, request.URL)
+		err := h.repository.Create(urlIdentifier, request.URL)
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error create")
 		}
