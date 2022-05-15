@@ -30,8 +30,10 @@ func setConfig() (*config.Config, error) {
 
 	if baseURL, ok := os.LookupEnv("BASE_URL"); ok {
 		cfg.BaseURL = baseURL
+		fmt.Printf("env baseulr: %s\n", baseURL)
 	}
 	if serverAddress, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
+		fmt.Printf("env serverAddress: %s\n", serverAddress)
 		cfg.ServerAddress = serverAddress
 	}
 
