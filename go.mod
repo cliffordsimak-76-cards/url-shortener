@@ -3,6 +3,7 @@ module github.com/cliffordsimak-76-cards/url-shortener
 go 1.17
 
 require (
+	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/stretchr/testify v1.7.1
