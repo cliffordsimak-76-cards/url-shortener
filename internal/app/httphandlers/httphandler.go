@@ -4,13 +4,11 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 )
 
-const host = "http://localhost:8080/"
-
 type HTTPHandler struct {
-	urlRepository repository.URLRepository
+	urlRepository repository.Storage
 }
 
-func NewHTTPHandler(urlRepository repository.URLRepository) *HTTPHandler {
+func NewHTTPHandler(urlRepository repository.Storage) *HTTPHandler {
 	return &HTTPHandler{
 		urlRepository: urlRepository,
 	}

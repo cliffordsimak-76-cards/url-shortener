@@ -8,7 +8,7 @@ import (
 )
 
 func Run(cfg *config.Config) error {
-	urlRepository := repository.NewURLRepository()
+	urlRepository := repository.NewInMemory()
 	httpHandler := httphandlers.NewHTTPHandler(urlRepository)
 
 	e := echo.New()
