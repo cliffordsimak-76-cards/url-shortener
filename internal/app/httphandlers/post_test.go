@@ -1,6 +1,7 @@
 package httphandlers
 
 import (
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -38,7 +39,10 @@ func TestPostURL(t *testing.T) {
 			rec := httptest.NewRecorder()
 			ctx := e.NewContext(req, rec)
 
-			h := te.httpHandler.Post()
+			cfg := &config.Config{
+				BaseURL: "http://localhost:8080",
+			}
+			h := te.httpHandler.Post(cfg)
 			if assert.NoError(t, h(ctx)) {
 				require.Equal(t, tt.want.code, rec.Code)
 				require.NotNil(t, rec.Body.String())

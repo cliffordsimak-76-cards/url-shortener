@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 )
 
@@ -48,13 +47,6 @@ func TestShorten(t *testing.T) {
 				compareMessage(t, tt.response, rec.Body.Bytes())
 			}
 		})
-	}
-}
-
-func getConfig() *config.Config {
-	return &config.Config{
-		BaseURL:       os.Getenv("BASE_URL"),
-		ServerAddress: os.Getenv("SERVER_ADDRESS"),
 	}
 }
 

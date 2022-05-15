@@ -3,10 +3,9 @@ package httphandlers
 import (
 	"encoding/json"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/converter"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"strings"
 )
 
 type Request struct {
@@ -24,19 +23,15 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		shortURL := converter.StringToMD5(request.URL)
-		err := h.urlRepository.Create(shortURL, request.URL)
+		urlIdentifier := utils.StringToMD5(request.URL)
+		err := h.urlRepository.Create(urlIdentifier, request.URL)
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error create")
 		}
 
 		c.Response().Header().Set("Content-Type", "application/json")
 		return c.JSON(http.StatusCreated, Response{
-			Result: makeResultString(cfg.BaseURL, shortURL),
+			Result: utils.MakeResultString(cfg.BaseURL, urlIdentifier),
 		})
 	}
-}
-
-func makeResultString(baseURL string, shortURL string) string {
-	return strings.Join([]string{baseURL, shortURL}, "/")
 }

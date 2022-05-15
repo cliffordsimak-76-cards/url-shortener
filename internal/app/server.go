@@ -13,7 +13,7 @@ func Run(cfg *config.Config) error {
 
 	e := echo.New()
 	e.GET("/:id", httpHandler.Get())
-	e.POST("/", httpHandler.Post())
+	e.POST("/", httpHandler.Post(cfg))
 	e.POST("/api/shorten", httpHandler.Shorten(cfg))
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
