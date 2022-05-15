@@ -6,6 +6,7 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/converter"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strings"
 )
 
 type Request struct {
@@ -37,5 +38,5 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 }
 
 func makeResultString(baseURL string, shortURL string) string {
-	return baseURL + "/" + shortURL
+	return strings.Join([]string{baseURL, shortURL}, "/")
 }

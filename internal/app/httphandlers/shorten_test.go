@@ -39,7 +39,7 @@ func TestShorten(t *testing.T) {
 			ctx := e.NewContext(req, rec)
 
 			cfg := &config.Config{
-				BaseURL: "http://localhost:8080/",
+				BaseURL: "http://localhost:8080",
 			}
 
 			h := te.httpHandler.Shorten(cfg)
