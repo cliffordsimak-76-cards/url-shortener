@@ -20,7 +20,7 @@ func TestShorten(t *testing.T) {
 		code     int
 	}{
 		{
-			name: "with param",
+			name: "success",
 			request: []byte(`{
 								"url":"https://yandex.ru"
 							}`),
