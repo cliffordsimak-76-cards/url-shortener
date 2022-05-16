@@ -37,6 +37,7 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 		}
 
 		c.Response().Header().Set("Content-Type", "application/json")
+		c.Response().Header().Set("Content-Encoding", "gzip")
 		return c.JSON(http.StatusCreated, Response{
 			Result: utils.MakeResultString(cfg.BaseURL, urlIdentifier),
 		})

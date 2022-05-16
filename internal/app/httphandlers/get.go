@@ -14,6 +14,7 @@ func (h *HTTPHandler) Get() echo.HandlerFunc {
 		}
 
 		c.Response().Header().Set("Location", URL)
+		c.Response().Header().Set("Content-Encoding", "gzip")
 		return c.NoContent(http.StatusTemporaryRedirect)
 	}
 }
