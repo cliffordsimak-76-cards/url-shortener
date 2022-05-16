@@ -11,7 +11,7 @@ func Decompress() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			req := c.Request()
-			if !strings.Contains(req.Header.Get(echo.HeaderAcceptEncoding), gzipScheme) {
+			if !strings.Contains(req.Header.Get(echo.HeaderContentEncoding), gzipScheme) {
 				return next(c)
 			}
 
