@@ -5,6 +5,7 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"io"
 	"net/http"
 )
@@ -23,6 +24,7 @@ func (h *HTTPHandler) Post(cfg *config.Config) echo.HandlerFunc {
 		shortURL := utils.MakeResultString(cfg.BaseURL, urlIdentifier)
 		err = h.repository.Create(urlIdentifier, string(body))
 		if err != nil {
+			log.Error(err)
 			return c.String(http.StatusBadRequest, "error create")
 		}
 

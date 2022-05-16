@@ -7,6 +7,7 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"net/http"
 )
 
@@ -31,6 +32,7 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 		if err != nil {
+			log.Error(err)
 			return c.String(http.StatusBadRequest, "error create")
 		}
 
