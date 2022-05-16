@@ -10,17 +10,18 @@ import (
 func Decompress() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if !strings.Contains(c.Request().Header.Get("Content-Encoding"), "gzip") {
+			req := c.Request()
+			if !strings.Contains(req.Header.Get(echo.HeaderAcceptEncoding), gzipScheme) {
 				return next(c)
 			}
 
-			gz, err := gzip.NewReader(c.Request().Body)
+			gz, err := gzip.NewReader(req.Body)
 			if err != nil {
-				return c.String(http.StatusBadRequest, err.Error())
+				return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 			}
 			defer gz.Close()
 
-			c.Request().Body = gz
+			req.Body = gz
 			return next(c)
 		}
 	}

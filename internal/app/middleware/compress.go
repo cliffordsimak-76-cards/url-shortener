@@ -33,7 +33,7 @@ func Compress() echo.MiddlewareFunc {
 
 			gz, err := gzip.NewWriterLevel(c.Response().Writer, gzip.BestSpeed)
 			if err != nil {
-				return c.String(http.StatusBadRequest, err.Error())
+				return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 			}
 			defer gz.Close()
 
