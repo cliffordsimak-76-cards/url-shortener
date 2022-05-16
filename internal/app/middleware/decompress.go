@@ -10,7 +10,7 @@ import (
 func Decompress() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if !strings.Contains(c.Response().Header().Get("Content-Encoding"), "gzip") {
+			if !strings.Contains(c.Request().Header.Get("Content-Encoding"), "gzip") {
 				return next(c)
 			}
 
@@ -20,6 +20,7 @@ func Decompress() echo.MiddlewareFunc {
 			}
 			defer gz.Close()
 
+			c.Request().Body = gz
 			return next(c)
 		}
 	}

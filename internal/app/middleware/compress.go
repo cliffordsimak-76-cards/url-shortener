@@ -8,15 +8,26 @@ import (
 	"strings"
 )
 
+const (
+	gzipScheme = "gzip"
+)
+
 type gzipWriter struct {
+	io.Writer
 	http.ResponseWriter
-	Writer io.Writer
+}
+
+func (w *gzipWriter) Write(b []byte) (int, error) {
+	if w.Header().Get(echo.HeaderContentType) == "" {
+		w.Header().Set(echo.HeaderContentType, http.DetectContentType(b))
+	}
+	return w.Writer.Write(b)
 }
 
 func Compress() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if !strings.Contains(c.Request().Header.Get("Accept-Encoding"), "gzip") {
+			if !strings.Contains(c.Request().Header.Get(echo.HeaderAcceptEncoding), gzipScheme) {
 				return next(c)
 			}
 
@@ -26,7 +37,9 @@ func Compress() echo.MiddlewareFunc {
 			}
 			defer gz.Close()
 
-			c.Response().Writer = gzipWriter{ResponseWriter: c.Response().Writer, Writer: gz}
+			res := c.Response()
+			res.Header().Add(echo.HeaderContentEncoding, gzipScheme)
+			res.Writer = &gzipWriter{Writer: gz, ResponseWriter: res.Writer}
 			return next(c)
 		}
 	}

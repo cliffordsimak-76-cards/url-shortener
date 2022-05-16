@@ -26,8 +26,8 @@ func Run(cfg *config.Config) error {
 	e.GET("/:id", httpHandler.Get())
 	e.POST("/", httpHandler.Post(cfg))
 	e.POST("/api/shorten", httpHandler.Shorten(cfg))
-	e.Use(middleware.Compress())
 	e.Use(middleware.Decompress())
+	e.Use(middleware.Compress())
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
 
