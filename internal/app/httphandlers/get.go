@@ -13,8 +13,7 @@ func (h *HTTPHandler) Get() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, fmt.Errorf("error get URL: %s", err).Error())
 		}
 
-		c.Response().Header().Set("Location", URL)
-		c.Response().Header().Set("Content-Encoding", "gzip")
+		c.Response().Header().Set(echo.HeaderLocation, URL)
 		return c.NoContent(http.StatusTemporaryRedirect)
 	}
 }
