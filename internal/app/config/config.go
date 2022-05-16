@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"github.com/caarlos0/env"
-	"os"
 	"regexp"
 	"strings"
 )
@@ -20,15 +19,6 @@ func NewConfig() (*Config, error) {
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {
 		return nil, fmt.Errorf("failed to retrieve env variables: %w", err)
-	}
-
-	if baseURL, ok := os.LookupEnv("BASE_URL"); ok {
-		cfg.BaseURL = baseURL
-		fmt.Printf("env baseulr: %s\n", baseURL)
-	}
-	if serverAddress, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
-		fmt.Printf("env serverAddress: %s\n", serverAddress)
-		cfg.ServerAddress = serverAddress
 	}
 
 	err := validatePorts(cfg)
