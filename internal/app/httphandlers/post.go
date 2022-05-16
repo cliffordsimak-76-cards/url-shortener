@@ -1,8 +1,9 @@
 package httphandlers
 
 import (
+	"errors"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -20,14 +21,22 @@ func (h *HTTPHandler) Post(cfg *config.Config) echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "body is empty")
 		}
 
-		urlIdentifier := uuid.New().String()
-		shortURL := utils.MakeResultString(cfg.BaseURL, urlIdentifier)
-		err = h.repository.Create(urlIdentifier, string(body))
+		URL := string(body)
+		err = validateURL(URL)
 		if err != nil {
-			log.Error(err)
-			return c.String(http.StatusBadRequest, "error create")
+			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		return c.String(http.StatusCreated, shortURL)
+		urlIdentifier := uuid.New().String()
+		err = h.repository.Create(urlIdentifier, URL)
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		if err != nil {
+			log.Error(err)
+			return c.String(http.StatusBadRequest, "error create in db")
+		}
+
+		return c.String(http.StatusCreated, makeShortLink(cfg.BaseURL, urlIdentifier))
 	}
 }

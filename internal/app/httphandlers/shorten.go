@@ -26,19 +26,24 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
+		err := validateURL(request.URL)
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+
 		urlIdentifier := utils.StringToMD5(request.URL)
-		err := h.repository.Create(urlIdentifier, request.URL)
+		err = h.repository.Create(urlIdentifier, request.URL)
 		if errors.Is(err, repository.ErrAlreadyExists) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 		if err != nil {
 			log.Error(err)
-			return c.String(http.StatusBadRequest, "error create")
+			return c.String(http.StatusBadRequest, "error create in db")
 		}
 
 		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		return c.JSON(http.StatusCreated, Response{
-			Result: utils.MakeResultString(cfg.BaseURL, urlIdentifier),
+			Result: makeShortLink(cfg.BaseURL, urlIdentifier),
 		})
 	}
 }
