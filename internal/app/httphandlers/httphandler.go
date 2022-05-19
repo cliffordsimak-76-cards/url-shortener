@@ -1,6 +1,7 @@
 package httphandlers
 
 import (
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"net/url"
 	"strings"
@@ -8,11 +9,16 @@ import (
 
 type HTTPHandler struct {
 	repository repository.Repository
+	cfg        *config.Config
 }
 
-func NewHTTPHandler(repository repository.Repository) *HTTPHandler {
+func NewHTTPHandler(
+	repository repository.Repository,
+	cfg *config.Config,
+) *HTTPHandler {
 	return &HTTPHandler{
 		repository: repository,
+		cfg:        cfg,
 	}
 }
 

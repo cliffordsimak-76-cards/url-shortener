@@ -3,7 +3,6 @@ package httphandlers
 import (
 	"encoding/json"
 	"errors"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
@@ -19,7 +18,7 @@ type Response struct {
 	Result string `json:"result"`
 }
 
-func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
+func (h *HTTPHandler) Shorten() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var request *Request
 		if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
@@ -43,7 +42,7 @@ func (h *HTTPHandler) Shorten(cfg *config.Config) echo.HandlerFunc {
 
 		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		return c.JSON(http.StatusCreated, Response{
-			Result: makeShortLink(cfg.BaseURL, urlIdentifier),
+			Result: makeShortLink(h.cfg.BaseURL, urlIdentifier),
 		})
 	}
 }

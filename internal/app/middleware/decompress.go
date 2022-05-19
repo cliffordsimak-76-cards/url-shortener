@@ -7,22 +7,20 @@ import (
 	"strings"
 )
 
-func Decompress() echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			req := c.Request()
-			if !strings.Contains(req.Header.Get(echo.HeaderContentEncoding), gzipScheme) {
-				return next(c)
-			}
-
-			gz, err := gzip.NewReader(req.Body)
-			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-			}
-			defer gz.Close()
-
-			req.Body = gz
+func Decompress(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		req := c.Request()
+		if !strings.Contains(req.Header.Get(echo.HeaderContentEncoding), gzipScheme) {
 			return next(c)
 		}
+
+		gz, err := gzip.NewReader(req.Body)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+		defer gz.Close()
+
+		req.Body = gz
+		return next(c)
 	}
 }

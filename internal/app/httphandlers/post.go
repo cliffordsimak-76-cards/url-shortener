@@ -2,7 +2,6 @@ package httphandlers
 
 import (
 	"errors"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -11,7 +10,7 @@ import (
 	"net/http"
 )
 
-func (h *HTTPHandler) Post(cfg *config.Config) echo.HandlerFunc {
+func (h *HTTPHandler) Post() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		body, err := io.ReadAll(c.Request().Body)
 		if err != nil {
@@ -37,6 +36,6 @@ func (h *HTTPHandler) Post(cfg *config.Config) echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "error create in db")
 		}
 
-		return c.String(http.StatusCreated, makeShortLink(cfg.BaseURL, urlIdentifier))
+		return c.String(http.StatusCreated, makeShortLink(h.cfg.BaseURL, urlIdentifier))
 	}
 }

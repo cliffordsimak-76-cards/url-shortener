@@ -20,14 +20,14 @@ func Run(cfg *config.Config) error {
 	} else {
 		repo = repository.NewInMemory()
 	}
-	httpHandler := httphandlers.NewHTTPHandler(repo)
+	httpHandler := httphandlers.NewHTTPHandler(repo, cfg)
 
 	e := echo.New()
 	e.GET("/:id", httpHandler.Get())
-	e.POST("/", httpHandler.Post(cfg))
-	e.POST("/api/shorten", httpHandler.Shorten(cfg))
-	e.Use(middleware.Decompress())
-	e.Use(middleware.Compress())
+	e.POST("/", httpHandler.Post())
+	e.POST("/api/shorten", httpHandler.Shorten())
+	e.Use(middleware.Decompress)
+	e.Use(middleware.Compress)
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
 

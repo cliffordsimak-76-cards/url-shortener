@@ -2,7 +2,6 @@ package httphandlers
 
 import (
 	"bytes"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -37,11 +36,7 @@ func TestShorten(t *testing.T) {
 			rec := httptest.NewRecorder()
 			ctx := e.NewContext(req, rec)
 
-			cfg := &config.Config{
-				BaseURL: "http://localhost:8080",
-			}
-
-			h := te.httpHandler.Shorten(cfg)
+			h := te.httpHandler.Shorten()
 			if assert.NoError(t, h(ctx)) {
 				require.Equal(t, tt.code, rec.Code)
 				compareMessage(t, tt.response, rec.Body.Bytes())
