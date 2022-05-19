@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"github.com/caarlos0/env"
 	"regexp"
@@ -21,12 +22,21 @@ func NewConfig() (*Config, error) {
 		return nil, fmt.Errorf("failed to retrieve env variables: %w", err)
 	}
 
+	parseFlags(cfg)
+
 	err := validatePorts(cfg)
 	if err != nil {
 		return nil, err
 	}
 
 	return cfg, nil
+}
+
+func parseFlags(cfg *Config) {
+	flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "address to listen on")
+	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "base URL for short link")
+	flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "file storage path")
+	flag.Parse()
 }
 
 func validatePorts(cfg *Config) error {
