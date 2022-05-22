@@ -1,11 +1,7 @@
 package httphandlers
 
 import (
-	"errors"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"io"
 	"net/http"
 )
@@ -26,16 +22,11 @@ func (h *HTTPHandler) Post() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		urlIdentifier := uuid.New().String()
-		err = h.repository.Create(urlIdentifier, URL)
-		if errors.Is(err, repository.ErrAlreadyExists) {
-			return c.String(http.StatusBadRequest, err.Error())
-		}
+		urlID, err := h.generateUrlID(URL)
 		if err != nil {
-			log.Error(err)
-			return c.String(http.StatusBadRequest, "error create in db")
+			return c.String(http.StatusInternalServerError, err.Error())
 		}
 
-		return c.String(http.StatusCreated, makeShortLink(h.cfg.BaseURL, urlIdentifier))
+		return c.String(http.StatusCreated, h.buildURL(urlID))
 	}
 }

@@ -5,20 +5,19 @@ import (
 	"testing"
 )
 
-func TestMakeShortLink(t *testing.T) {
-	tCases := []struct {
-		baseURL    string
+func TestBuildUrl(t *testing.T) {
+	te := newTestEnv(t)
+	tests := []struct {
 		identifier string
 		want       string
 	}{
 		{
-			baseURL:    "http://localhost:8080",
 			identifier: "8e43",
 			want:       "http://localhost:8080/8e43",
 		},
 	}
-	for _, tCase := range tCases {
-		resp := makeShortLink(tCase.baseURL, tCase.identifier)
+	for _, tCase := range tests {
+		resp := te.httpHandler.buildURL(tCase.identifier)
 		assert.Equal(t, tCase.want, resp)
 	}
 }

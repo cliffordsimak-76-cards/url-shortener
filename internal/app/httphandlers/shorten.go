@@ -2,11 +2,7 @@ package httphandlers
 
 import (
 	"encoding/json"
-	"errors"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"net/http"
 )
 
@@ -30,19 +26,14 @@ func (h *HTTPHandler) Shorten() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		urlIdentifier := utils.StringToMD5(request.URL)
-		err = h.repository.Create(urlIdentifier, request.URL)
-		if errors.Is(err, repository.ErrAlreadyExists) {
-			return c.String(http.StatusBadRequest, err.Error())
-		}
+		urlID, err := h.generateUrlID(request.URL)
 		if err != nil {
-			log.Error(err)
-			return c.String(http.StatusBadRequest, "error create in db")
+			return c.String(http.StatusInternalServerError, err.Error())
 		}
 
 		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		return c.JSON(http.StatusCreated, Response{
-			Result: makeShortLink(h.cfg.BaseURL, urlIdentifier),
+			Result: h.buildURL(urlID),
 		})
 	}
 }
