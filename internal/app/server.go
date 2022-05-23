@@ -24,10 +24,12 @@ func Run(cfg *config.Config) error {
 
 	e := echo.New()
 	e.GET("/:id", httpHandler.Get())
+	e.GET("/api/user/urls", httpHandler.GetAll())
 	e.POST("/", httpHandler.Post())
 	e.POST("/api/shorten", httpHandler.Shorten())
 	e.Use(middleware.Decompress)
 	e.Use(middleware.Compress)
+	e.Use(middleware.Cookie)
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
 

@@ -40,6 +40,7 @@ func TestGet(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			e := echo.New()
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			req.Header.Add(echo.HeaderCookie, "226d0f8a5fa9180d")
 			rec := httptest.NewRecorder()
 			ctx := e.NewContext(req, rec)
 
@@ -47,7 +48,7 @@ func TestGet(t *testing.T) {
 			ctx.SetParamNames("id")
 			ctx.SetParamValues(tt.value)
 
-			te.inMemoryRepo.Create("a506e095-b901-47db-8b8f-b23f9b1b9e1b", "https://www.yandex.ru")
+			te.inMemoryRepo.Create("226d0f8a5fa9180d", "a506e095-b901-47db-8b8f-b23f9b1b9e1b", "https://www.yandex.ru")
 
 			h := te.httpHandler.Get()
 			if assert.NoError(t, h(ctx)) {

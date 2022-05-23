@@ -1,10 +1,13 @@
 package repository
 
-import "errors"
+import (
+	"errors"
+)
 
 type Repository interface {
-	Create(id string, url string) error
-	Get(id string) (string, error)
+	Create(userID string, id string, url string) error
+	Get(userID string, id string) (string, error)
+	GetAll(userID string) (map[string]string, error)
 }
 
 var (

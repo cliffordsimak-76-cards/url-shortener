@@ -16,13 +16,18 @@ func (h *HTTPHandler) Post() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "body is empty")
 		}
 
+		userID, err := extractUserID(c.Request())
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+
 		URL := string(body)
 		err = validateURL(URL)
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		urlID, err := h.generateUrlID(URL)
+		urlID, err := h.generateUrlID(userID, URL)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		}

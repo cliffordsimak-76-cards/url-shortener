@@ -8,7 +8,7 @@ import (
 )
 
 type InFile struct {
-	cache   map[string]string
+	cache   map[string]map[string]string
 	encoder *json.Encoder
 	mutex   *sync.Mutex
 }
@@ -19,7 +19,7 @@ func NewInFile(filePath string) (Repository, error) {
 		return nil, err
 	}
 
-	cache := make(map[string]string)
+	cache := make(map[string]map[string]string)
 	if fileInfo, _ := file.Stat(); fileInfo.Size() != 0 {
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
@@ -37,25 +37,43 @@ func NewInFile(filePath string) (Repository, error) {
 	}, nil
 }
 
-func (s *InFile) Create(id string, url string) error {
-	if _, ok := s.cache[id]; ok {
+func (s *InFile) Create(
+	userID string,
+	id string,
+	url string,
+) error {
+	if _, ok := s.cache[userID][id]; ok {
 		return ErrAlreadyExists
 	}
 	s.mutex.Lock()
-	s.cache[id] = url
+	urlByID, ok := s.cache[userID]
+	if !ok {
+		urlByID = map[string]string{}
+		s.cache[userID] = urlByID
+	}
+	urlByID[id] = url
 	s.mutex.Unlock()
 
-	data := make(map[string]string, 1)
-	data[id] = url
+	data := make(map[string]map[string]string, 1)
+	data[id] = map[string]string{id: url}
 	return s.encoder.Encode(&data)
 }
 
-func (s *InFile) Get(id string) (string, error) {
+func (s *InFile) Get(
+	userID string,
+	id string,
+) (string, error) {
 	s.mutex.Lock()
-	URL, ok := s.cache[id]
+	URL, ok := s.cache[userID][id]
 	s.mutex.Unlock()
 	if !ok {
 		return "", ErrNotFound
 	}
 	return URL, nil
+}
+
+func (s *InFile) GetAll(
+	userID string,
+) (map[string]string, error) {
+	panic("implement me")
 }

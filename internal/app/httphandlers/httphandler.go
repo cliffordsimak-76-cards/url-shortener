@@ -1,12 +1,15 @@
 package httphandlers
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -26,17 +29,12 @@ func NewHTTPHandler(
 	}
 }
 
-func validateURL(rawURL string) error {
-	_, err := url.ParseRequestURI(rawURL)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (h *HTTPHandler) generateUrlID(URL string) (string, error) {
+func (h *HTTPHandler) generateUrlID(
+	userID string,
+	URL string,
+) (string, error) {
 	urlID := utils.StringToMD5(URL)
-	err := h.repository.Create(urlID, URL)
+	err := h.repository.Create(userID, urlID, URL)
 	if err != nil {
 		if errors.Is(err, repository.ErrAlreadyExists) {
 			return "", err
@@ -49,4 +47,22 @@ func (h *HTTPHandler) generateUrlID(URL string) (string, error) {
 
 func (h *HTTPHandler) buildURL(id string) string {
 	return strings.Join([]string{h.cfg.BaseURL, id}, "/")
+}
+
+func validateURL(rawURL string) error {
+	_, err := url.ParseRequestURI(rawURL)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func extractUserID(req *http.Request) (string, error) {
+	cookie := req.Header.Get(echo.HeaderCookie)
+	data, err := hex.DecodeString(cookie)
+	if err != nil {
+		log.Error(err)
+		return "", fmt.Errorf("error decode cookie")
+	}
+	return hex.EncodeToString(data[:8]), nil
 }

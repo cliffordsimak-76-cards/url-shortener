@@ -21,12 +21,17 @@ func (h *HTTPHandler) Shorten() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		err := validateURL(request.URL)
+		userID, err := extractUserID(c.Request())
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		urlID, err := h.generateUrlID(request.URL)
+		err = validateURL(request.URL)
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+
+		urlID, err := h.generateUrlID(userID, request.URL)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		}
