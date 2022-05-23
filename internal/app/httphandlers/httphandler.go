@@ -7,7 +7,6 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"net/http"
 	"net/url"
@@ -58,8 +57,11 @@ func validateURL(rawURL string) error {
 }
 
 func extractUserID(req *http.Request) (string, error) {
-	cookie := req.Header.Get(echo.HeaderCookie)
-	data, err := hex.DecodeString(cookie)
+	cookie, err := req.Cookie("userID")
+	if err != nil {
+		return "", fmt.Errorf("error read cookie")
+	}
+	data, err := hex.DecodeString(cookie.Value)
 	if err != nil {
 		log.Error(err)
 		return "", fmt.Errorf("error decode cookie")

@@ -17,19 +17,21 @@ var userIDLen = 8
 func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
-		if req.Header.Get(echo.HeaderCookie) != "" {
-			err := validateCookie(req.Header.Get(echo.HeaderCookie))
+		cookie, _ := req.Cookie("userID")
+
+		if cookie != nil {
+			err := validateCookie(cookie.Value)
 			if err == nil {
 				return next(c)
 			}
 		}
 
-		cookie, err := generateCookieValue()
+		newCookie, err := generateCookie()
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
-		req.Header.Add(echo.HeaderCookie, cookie)
-		c.Response().Header().Add(echo.HeaderCookie, cookie)
+		req.AddCookie(newCookie)
+		c.SetCookie(newCookie)
 		return next(c)
 	}
 }
@@ -48,16 +50,19 @@ func validateCookie(cookieValue string) error {
 	return nil
 }
 
-func generateCookieValue() (string, error) {
+func generateCookie() (*http.Cookie, error) {
 	userID, err := generateUserID()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	sign := utils.SignHMAC256(userID, secretKey)
-	cookie := bytes.Join([][]byte{
+	value := bytes.Join([][]byte{
 		userID, sign,
 	}, []byte(""))
-	return hex.EncodeToString(cookie), nil
+	return &http.Cookie{
+		Name:  "userID",
+		Value: hex.EncodeToString(value),
+	}, nil
 }
 
 func generateUserID() ([]byte, error) {
