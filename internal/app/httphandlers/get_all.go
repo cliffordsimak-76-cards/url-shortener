@@ -35,6 +35,7 @@ func (h *HTTPHandler) GetAll() echo.HandlerFunc {
 			})
 		}
 
+		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		return c.JSON(http.StatusOK, response)
 	}
 }
