@@ -1,7 +1,6 @@
 package httphandlers
 
 import (
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"io"
 	"net/http"
@@ -17,13 +16,17 @@ func (h *HTTPHandler) Post() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "body is empty")
 		}
 
-		urlIdentifier := uuid.New().String()
-		shortURL := host + urlIdentifier
-		err = h.urlRepository.Create(urlIdentifier, string(body))
+		URL := string(body)
+		err = validateURL(URL)
 		if err != nil {
-			return c.String(http.StatusBadRequest, "error create")
+			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		return c.String(http.StatusCreated, shortURL)
+		urlID, err := h.generateUrlID(URL)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.String(http.StatusCreated, h.buildURL(urlID))
 	}
 }

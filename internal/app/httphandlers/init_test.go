@@ -1,21 +1,27 @@
 package httphandlers
 
 import (
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"testing"
 )
 
 type testEnv struct {
-	urlRepository repository.URLRepository
-	httpHandler   *HTTPHandler
+	inMemoryRepo repository.Repository
+	httpHandler  *HTTPHandler
 }
 
 func newTestEnv(t *testing.T) *testEnv {
 	te := &testEnv{}
 
-	te.urlRepository = repository.NewURLRepository()
+	cfg := &config.Config{
+		BaseURL: "http://localhost:8080",
+	}
+
+	te.inMemoryRepo = repository.NewInMemory()
 	te.httpHandler = NewHTTPHandler(
-		te.urlRepository,
+		te.inMemoryRepo,
+		cfg,
 	)
 	return te
 }

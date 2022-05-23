@@ -2,7 +2,6 @@ package httphandlers
 
 import (
 	"encoding/json"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/converter"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -22,15 +21,19 @@ func (h *HTTPHandler) Shorten() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		shortURL := converter.StringToMD5(request.URL)
-		err := h.urlRepository.Create(shortURL, request.URL)
+		err := validateURL(request.URL)
 		if err != nil {
-			return c.String(http.StatusBadRequest, "error create")
+			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		c.Response().Header().Set("Content-Type", "application/json")
+		urlID, err := h.generateUrlID(request.URL)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, err.Error())
+		}
+
+		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		return c.JSON(http.StatusCreated, Response{
-			Result: host + shortURL,
+			Result: h.buildURL(urlID),
 		})
 	}
 }
