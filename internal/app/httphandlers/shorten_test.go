@@ -36,7 +36,7 @@ func TestShorten(t *testing.T) {
 			rec := httptest.NewRecorder()
 			ctx := e.NewContext(req, rec)
 
-			h := te.httpHandler.Shorten()
+			h := te.httpHandler.Shorten
 			if assert.NoError(t, h(ctx)) {
 				require.Equal(t, tt.code, rec.Code)
 				compareMessage(t, tt.response, rec.Body.Bytes())

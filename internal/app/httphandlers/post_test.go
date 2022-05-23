@@ -38,7 +38,7 @@ func TestPostURL(t *testing.T) {
 			rec := httptest.NewRecorder()
 			ctx := e.NewContext(req, rec)
 
-			h := te.httpHandler.Post()
+			h := te.httpHandler.Post
 			if assert.NoError(t, h(ctx)) {
 				require.Equal(t, tt.want.code, rec.Code)
 				require.NotNil(t, rec.Body.String())

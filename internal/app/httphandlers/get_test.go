@@ -50,7 +50,7 @@ func TestGet(t *testing.T) {
 
 			te.inMemoryRepo.Create("226d0f8a5fa9180d", "a506e095-b901-47db-8b8f-b23f9b1b9e1b", "https://www.yandex.ru")
 
-			h := te.httpHandler.Get()
+			h := te.httpHandler.Get
 			if assert.NoError(t, h(ctx)) {
 				require.Equal(t, tt.want.code, rec.Code)
 			}
