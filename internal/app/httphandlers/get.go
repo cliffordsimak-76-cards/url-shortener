@@ -1,6 +1,7 @@
 package httphandlers
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 func (h *HTTPHandler) Get(c echo.Context) error {
 	userID, err := extractUserID(c.Request())
 	if err != nil {
-		log.Infof("user: %s", userID)
+		fmt.Printf("user: %s\n", userID)
 		log.Error(err)
 		return c.String(http.StatusBadRequest, err.Error())
 	}
