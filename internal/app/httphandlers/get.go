@@ -9,6 +9,7 @@ import (
 func (h *HTTPHandler) Get(c echo.Context) error {
 	userID, err := extractUserID(c.Request())
 	if err != nil {
+		log.Infof("user: %s", userID)
 		log.Error(err)
 		return c.String(http.StatusBadRequest, err.Error())
 	}
