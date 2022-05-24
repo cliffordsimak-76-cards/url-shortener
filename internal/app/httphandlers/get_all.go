@@ -18,7 +18,7 @@ func (h *HTTPHandler) GetAll(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	urlByID, err := h.repository.GetAll(userID)
+	urls, err := h.repository.GetAll(userID)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			return c.NoContent(http.StatusNoContent)
@@ -27,10 +27,10 @@ func (h *HTTPHandler) GetAll(c echo.Context) error {
 	}
 
 	var response []*Url
-	for ID, url := range urlByID {
+	for _, url := range urls {
 		response = append(response, &Url{
-			Short:    h.buildURL(ID),
-			Original: url,
+			Short:    h.buildURL(url.Short),
+			Original: url.Original,
 		})
 	}
 

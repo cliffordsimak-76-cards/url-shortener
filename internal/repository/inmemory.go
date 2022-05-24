@@ -1,18 +1,21 @@
 package repository
 
 import (
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"sync"
 )
 
 type InMemory struct {
-	cache map[string]map[string]string
-	mutex *sync.Mutex
+	cache     map[string]string
+	userCache map[string][]*model.Url
+	mutex     *sync.Mutex
 }
 
 func NewInMemory() Repository {
 	return &InMemory{
-		cache: make(map[string]map[string]string),
-		mutex: &sync.Mutex{},
+		cache:     make(map[string]string),
+		userCache: make(map[string][]*model.Url),
+		mutex:     &sync.Mutex{},
 	}
 }
 
@@ -21,26 +24,26 @@ func (s *InMemory) Create(
 	id string,
 	url string,
 ) error {
-	if _, ok := s.cache[userID][id]; ok {
+	if _, ok := s.cache[id]; ok {
 		return ErrAlreadyExists
 	}
 	s.mutex.Lock()
-	urlByID, ok := s.cache[userID]
-	if !ok {
-		urlByID = map[string]string{}
-		s.cache[userID] = urlByID
-	}
-	urlByID[id] = url
+	s.cache[id] = url
+
+	//_, ok := s.userCache[userID]
+	//if !ok {
+	//	s.userCache[userID] = make([]*model.Url, 0)
+	//}
+	s.userCache[userID] = append(s.userCache[userID])
 	s.mutex.Unlock()
 	return nil
 }
 
 func (s *InMemory) Get(
-	userID string,
 	id string,
 ) (string, error) {
 	s.mutex.Lock()
-	URL, ok := s.cache[userID][id]
+	URL, ok := s.cache[id]
 	s.mutex.Unlock()
 	if !ok {
 		return "", ErrNotFound
@@ -50,12 +53,12 @@ func (s *InMemory) Get(
 
 func (s *InMemory) GetAll(
 	userID string,
-) (map[string]string, error) {
+) ([]*model.Url, error) {
 	s.mutex.Lock()
-	urlMap, ok := s.cache[userID]
+	urls, ok := s.userCache[userID]
 	s.mutex.Unlock()
 	if !ok {
 		return nil, ErrNotFound
 	}
-	return urlMap, nil
+	return urls, nil
 }

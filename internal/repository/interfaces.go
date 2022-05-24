@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 )
 
 type Repository interface {
 	Create(userID string, id string, url string) error
-	Get(userID string, id string) (string, error)
-	GetAll(userID string) (map[string]string, error)
+	Get(id string) (string, error)
+	GetAll(userID string) ([]*model.Url, error)
 }
 
 var (

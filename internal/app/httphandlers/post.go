@@ -17,7 +17,7 @@ func (h *HTTPHandler) Post(c echo.Context) error {
 	}
 
 	userID, err := extractUserID(c.Request())
-	log.Info("post user: %s", userID)
+	log.Info("post user: ", userID)
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}

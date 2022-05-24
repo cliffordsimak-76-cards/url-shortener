@@ -3,14 +3,16 @@ package repository
 import (
 	"bufio"
 	"encoding/json"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"os"
 	"sync"
 )
 
 type InFile struct {
-	cache   map[string]map[string]string
-	encoder *json.Encoder
-	mutex   *sync.Mutex
+	cache     map[string]string
+	userCache map[string][]*model.Url
+	encoder   *json.Encoder
+	mutex     *sync.Mutex
 }
 
 func NewInFile(filePath string) (Repository, error) {
@@ -19,7 +21,7 @@ func NewInFile(filePath string) (Repository, error) {
 		return nil, err
 	}
 
-	cache := make(map[string]map[string]string)
+	cache := make(map[string]string)
 	if fileInfo, _ := file.Stat(); fileInfo.Size() != 0 {
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
@@ -42,29 +44,23 @@ func (s *InFile) Create(
 	id string,
 	url string,
 ) error {
-	if _, ok := s.cache[userID][id]; ok {
+	if _, ok := s.cache[id]; ok {
 		return ErrAlreadyExists
 	}
 	s.mutex.Lock()
-	urlByID, ok := s.cache[userID]
-	if !ok {
-		urlByID = map[string]string{}
-		s.cache[userID] = urlByID
-	}
-	urlByID[id] = url
+	s.cache[id] = url
 	s.mutex.Unlock()
 
-	data := make(map[string]map[string]string, 1)
-	data[id] = map[string]string{id: url}
+	data := make(map[string]string, 1)
+	data[id] = url
 	return s.encoder.Encode(&data)
 }
 
 func (s *InFile) Get(
-	userID string,
 	id string,
 ) (string, error) {
 	s.mutex.Lock()
-	URL, ok := s.cache[userID][id]
+	URL, ok := s.cache[id]
 	s.mutex.Unlock()
 	if !ok {
 		return "", ErrNotFound
@@ -74,6 +70,6 @@ func (s *InFile) Get(
 
 func (s *InFile) GetAll(
 	userID string,
-) (map[string]string, error) {
+) ([]*model.Url, error) {
 	panic("implement me")
 }

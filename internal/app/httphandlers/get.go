@@ -7,14 +7,7 @@ import (
 )
 
 func (h *HTTPHandler) Get(c echo.Context) error {
-	userID, err := extractUserID(c.Request())
-	log.Info("get user: %s", userID)
-	if err != nil {
-		log.Error(err)
-		return c.String(http.StatusBadRequest, err.Error())
-	}
-
-	URL, err := h.repository.Get(userID, c.Param("id"))
+	URL, err := h.repository.Get(c.Param("id"))
 	if err != nil {
 		log.Error(err)
 		return c.String(http.StatusBadRequest, err.Error())
