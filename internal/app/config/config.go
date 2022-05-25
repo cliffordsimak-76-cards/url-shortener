@@ -6,6 +6,12 @@ import (
 	"github.com/caarlos0/env"
 )
 
+const (
+	UserCookieName string = "userID"
+	UserIDLen      int    = 8
+	SecretKey      string = "secret key"
+)
+
 type Config struct {
 	ServerAddress   string `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL         string `env:"BASE_URL" envDefault:"http://localhost:8080"`

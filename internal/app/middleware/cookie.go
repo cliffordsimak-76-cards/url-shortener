@@ -6,19 +6,16 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-var secretKey = []byte("secret key")
-var userIDLen = 8
-
 func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
-		cookie, _ := req.Cookie("userID")
-
+		cookie, _ := req.Cookie(config.UserCookieName)
 		if cookie != nil {
 			err := validateCookie(cookie.Value)
 			if err == nil {
@@ -41,10 +38,10 @@ func validateCookie(cookieValue string) error {
 	if err != nil {
 		return fmt.Errorf("cant decode cookie value")
 	}
-	h := hmac.New(sha256.New, secretKey)
-	h.Write(data[:userIDLen])
+	h := hmac.New(sha256.New, []byte(config.SecretKey))
+	h.Write(data[:config.UserIDLen])
 	sign := h.Sum(nil)
-	if !hmac.Equal(sign, data[userIDLen:]) {
+	if !hmac.Equal(sign, data[config.UserIDLen:]) {
 		return fmt.Errorf("wrong cookie value")
 	}
 	return nil
@@ -55,18 +52,16 @@ func generateCookie() (*http.Cookie, error) {
 	if err != nil {
 		return nil, err
 	}
-	sign := utils.SignHMAC256(userID, secretKey)
-	value := bytes.Join([][]byte{
-		userID, sign,
-	}, []byte(""))
+	sign := utils.SignHMAC256(userID, []byte(config.SecretKey))
+	cookieValue := bytes.Join([][]byte{userID, sign}, []byte(""))
 	return &http.Cookie{
-		Name:  "userID",
-		Value: hex.EncodeToString(value),
+		Name:  config.UserCookieName,
+		Value: hex.EncodeToString(cookieValue),
 	}, nil
 }
 
 func generateUserID() ([]byte, error) {
-	userID, err := utils.GenerateRandom(userIDLen)
+	userID, err := utils.GenerateRandom(config.UserIDLen)
 	if err != nil {
 		return nil, fmt.Errorf("error generate userID")
 	}

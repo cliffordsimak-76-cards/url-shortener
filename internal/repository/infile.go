@@ -33,9 +33,10 @@ func NewInFile(filePath string) (Repository, error) {
 	}
 
 	return &InFile{
-		cache:   cache,
-		encoder: json.NewEncoder(file),
-		mutex:   &sync.Mutex{},
+		cache:     cache,
+		userCache: make(map[string][]*model.Url),
+		encoder:   json.NewEncoder(file),
+		mutex:     &sync.Mutex{},
 	}, nil
 }
 
@@ -49,6 +50,14 @@ func (s *InFile) Create(
 	}
 	s.mutex.Lock()
 	s.cache[id] = url
+	_, ok := s.userCache[userID]
+	if !ok {
+		s.userCache[userID] = make([]*model.Url, 0)
+	}
+	s.userCache[userID] = append(s.userCache[userID], &model.Url{
+		Short:    id,
+		Original: url,
+	})
 	s.mutex.Unlock()
 
 	data := make(map[string]string, 1)
@@ -71,5 +80,11 @@ func (s *InFile) Get(
 func (s *InFile) GetAll(
 	userID string,
 ) ([]*model.Url, error) {
-	panic("implement me")
+	s.mutex.Lock()
+	urls, ok := s.userCache[userID]
+	s.mutex.Unlock()
+	if !ok {
+		return nil, ErrNotFound
+	}
+	return urls, nil
 }

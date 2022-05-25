@@ -57,7 +57,7 @@ func validateURL(rawURL string) error {
 }
 
 func extractUserID(req *http.Request) (string, error) {
-	cookie, err := req.Cookie("userID")
+	cookie, err := req.Cookie(config.UserCookieName)
 	if err != nil {
 		return "", fmt.Errorf("error read cookie")
 	}

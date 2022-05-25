@@ -29,7 +29,6 @@ func (s *InMemory) Create(
 	}
 	s.mutex.Lock()
 	s.cache[id] = url
-
 	_, ok := s.userCache[userID]
 	if !ok {
 		s.userCache[userID] = make([]*model.Url, 0)
