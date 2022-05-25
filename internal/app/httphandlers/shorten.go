@@ -30,7 +30,7 @@ func (h *HTTPHandler) Shorten(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	urlID, err := h.generateUrlID(userID, request.URL)
+	urlID, err := h.generateURLID(userID, request.URL)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}

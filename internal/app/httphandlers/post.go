@@ -26,7 +26,7 @@ func (h *HTTPHandler) Post(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	urlID, err := h.generateUrlID(userID, URL)
+	urlID, err := h.generateURLID(userID, URL)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}

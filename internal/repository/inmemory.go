@@ -7,14 +7,14 @@ import (
 
 type InMemory struct {
 	cache     map[string]string
-	userCache map[string][]*model.Url
+	userCache map[string][]*model.URL
 	mutex     *sync.Mutex
 }
 
 func NewInMemory() Repository {
 	return &InMemory{
 		cache:     make(map[string]string),
-		userCache: make(map[string][]*model.Url),
+		userCache: make(map[string][]*model.URL),
 		mutex:     &sync.Mutex{},
 	}
 }
@@ -31,9 +31,9 @@ func (s *InMemory) Create(
 	s.cache[id] = url
 	_, ok := s.userCache[userID]
 	if !ok {
-		s.userCache[userID] = make([]*model.Url, 0)
+		s.userCache[userID] = make([]*model.URL, 0)
 	}
-	s.userCache[userID] = append(s.userCache[userID], &model.Url{
+	s.userCache[userID] = append(s.userCache[userID], &model.URL{
 		Short:    id,
 		Original: url,
 	})
@@ -55,7 +55,7 @@ func (s *InMemory) Get(
 
 func (s *InMemory) GetAll(
 	userID string,
-) ([]*model.Url, error) {
+) ([]*model.URL, error) {
 	s.mutex.Lock()
 	urls, ok := s.userCache[userID]
 	s.mutex.Unlock()

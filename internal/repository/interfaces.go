@@ -8,7 +8,7 @@ import (
 type Repository interface {
 	Create(userID string, id string, url string) error
 	Get(id string) (string, error)
-	GetAll(userID string) ([]*model.Url, error)
+	GetAll(userID string) ([]*model.URL, error)
 }
 
 var (

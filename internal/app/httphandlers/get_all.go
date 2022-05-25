@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type Url struct {
+type URL struct {
 	Short    string `json:"short_url"`
 	Original string `json:"original_url"`
 }
@@ -26,9 +26,9 @@ func (h *HTTPHandler) GetAll(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	var response []*Url
+	var response []*URL
 	for _, url := range urls {
-		response = append(response, &Url{
+		response = append(response, &URL{
 			Short:    h.buildURL(url.Short),
 			Original: url.Original,
 		})

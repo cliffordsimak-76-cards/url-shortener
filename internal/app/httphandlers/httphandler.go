@@ -28,7 +28,7 @@ func NewHTTPHandler(
 	}
 }
 
-func (h *HTTPHandler) generateUrlID(
+func (h *HTTPHandler) generateURLID(
 	userID string,
 	URL string,
 ) (string, error) {

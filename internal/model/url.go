@@ -1,6 +1,6 @@
 package model
 
-type Url struct {
+type URL struct {
 	Short    string
 	Original string
 }
