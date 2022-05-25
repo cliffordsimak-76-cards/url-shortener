@@ -27,6 +27,7 @@ func NewConfig() (*Config, error) {
 
 	parseFlags(cfg)
 
+	fmt.Println(cfg)
 	return cfg, nil
 }
 
@@ -35,4 +36,14 @@ func parseFlags(cfg *Config) {
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "base URL for short link")
 	flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "file storage path")
 	flag.Parse()
+}
+
+func (cfg *Config) String() string {
+	return fmt.Sprintf(
+		"SERVER_ADDRESS: %s\n"+
+			"BASE_URL: %s\n"+
+			"FILE_STORAGE_PATH: %s\n"+
+			"DATABASE_DSN: %s\n",
+		cfg.ServerAddress, cfg.BaseURL, cfg.FileStoragePath, cfg.DatabaseDSN,
+	)
 }
