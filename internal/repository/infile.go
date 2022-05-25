@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"database/sql"
 	"encoding/json"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	_ "github.com/lib/pq"
 	"os"
@@ -21,12 +20,12 @@ type InFile struct {
 
 func NewInFile(
 	db *sql.DB,
-	cfg *config.Config) (Repository, error) {
-	file, err := os.OpenFile(cfg.FileStoragePath, os.O_RDWR|os.O_CREATE, 0777)
+	filePath string,
+) (Repository, error) {
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0777)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
 
 	cache := make(map[string]string)
 	if fileInfo, _ := file.Stat(); fileInfo.Size() != 0 {

@@ -18,7 +18,7 @@ func Run(cfg *config.Config) error {
 
 	var repo repository.Repository
 	if cfg.FileStoragePath != "" {
-		repo, err = repository.NewInFile(db, cfg)
+		repo, err = repository.NewInFile(db, cfg.FileStoragePath)
 		if err != nil {
 			return err
 		}
