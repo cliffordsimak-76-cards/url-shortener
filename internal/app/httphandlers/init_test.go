@@ -18,7 +18,7 @@ func newTestEnv(t *testing.T) *testEnv {
 		BaseURL: "http://localhost:8080",
 	}
 
-	te.inMemoryRepo = repository.NewInMemory()
+	te.inMemoryRepo = repository.NewInMemory(nil)
 	te.httpHandler = NewHTTPHandler(
 		te.inMemoryRepo,
 		cfg,

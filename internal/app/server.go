@@ -1,6 +1,7 @@
 package app
 
 import (
+	"database/sql"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
@@ -9,20 +10,25 @@ import (
 )
 
 func Run(cfg *config.Config) error {
-	var repo repository.Repository
-	var err error
+	db, err := sql.Open("postgres", cfg.DatabaseDSN)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
 
+	var repo repository.Repository
 	if cfg.FileStoragePath != "" {
-		repo, err = repository.NewInFile(cfg.FileStoragePath)
+		repo, err = repository.NewInFile(db, cfg)
 		if err != nil {
 			return err
 		}
 	} else {
-		repo = repository.NewInMemory()
+		repo = repository.NewInMemory(db)
 	}
 	httpHandler := httphandlers.NewHTTPHandler(repo, cfg)
 
 	e := echo.New()
+	e.GET("/ping", httpHandler.Ping)
 	e.GET("/:id", httpHandler.Get)
 	e.GET("/api/user/urls", httpHandler.GetAll)
 	e.POST("/", httpHandler.Post)
