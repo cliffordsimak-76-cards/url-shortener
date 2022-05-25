@@ -14,7 +14,6 @@ func Run(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
 	var repo repository.Repository
 	if cfg.FileStoragePath != "" {
