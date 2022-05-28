@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
-	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
 	"sync"
 )
@@ -72,7 +71,6 @@ func (s *InMemory) GetAll(
 
 func (s *InMemory) Ping() error {
 	if err := s.db.Ping(); err != nil {
-		log.Error("error db ping: ", err)
 		return err
 	}
 	return nil
