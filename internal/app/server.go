@@ -51,9 +51,6 @@ func initDB(
 	if err != nil {
 		return nil, err
 	}
-	if _, err = db.Exec(schema); err != nil {
-		return nil, err
-	}
 	return db, nil
 }
 
@@ -62,7 +59,7 @@ func initRepo(
 	db *sql.DB,
 ) (repository.Repository, error) {
 	if cfg.DatabaseDSN != "" {
-		return repository.NewInDatabase(db), nil
+		return repository.NewInPostgres(db), nil
 	}
 	if cfg.FileStoragePath != "" {
 		repo, err := repository.NewInFile(cfg.FileStoragePath)
@@ -73,16 +70,3 @@ func initRepo(
 	}
 	return repository.NewInMemory(), nil
 }
-
-var schema = `
-	CREATE TABLE IF NOT EXISTS urls (
-		id serial primary key,
-		base_url text not null unique,
-		short_url text not null 
-	);
-	CREATE TABLE IF NOT EXISTS users_url(
-	  user_id text not null,
-	  url_id int not null references urls(id),
-	  CONSTRAINT unique_url UNIQUE (user_id, url_id)
-	);
-	`
