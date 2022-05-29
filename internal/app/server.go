@@ -6,8 +6,8 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
+	_ "github.com/jackc/pgx/v4"
 	"github.com/labstack/echo/v4"
-	_ "github.com/lib/pq"
 )
 
 func Run(cfg *config.Config) error {
