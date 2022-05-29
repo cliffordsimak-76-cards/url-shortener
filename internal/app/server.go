@@ -12,23 +12,19 @@ import (
 )
 
 func Run(cfg *config.Config) error {
-	db, err := sql.Open("pgx", cfg.DatabaseDSN)
+	db, err := initDB(cfg)
 	if err != nil {
-		log.Error(err)
 		log.Fatal(err)
 		return err
 	}
 
-	var repo repository.Repository
-	if cfg.FileStoragePath != "" {
-		repo, err = repository.NewInFile(db, cfg.FileStoragePath)
-		if err != nil {
-			return err
-		}
-	} else {
-		repo = repository.NewInMemory(db)
+	repo, err := initRepo(cfg, db)
+	if err != nil {
+		log.Fatal(err)
+		return err
 	}
-	httpHandler := httphandlers.NewHTTPHandler(repo, cfg)
+
+	httpHandler := httphandlers.NewHTTPHandler(cfg, repo, db)
 
 	e := echo.New()
 	e.GET("/ping", httpHandler.Ping)
@@ -44,3 +40,46 @@ func Run(cfg *config.Config) error {
 
 	return nil
 }
+
+func initDB(
+	cfg *config.Config,
+) (*sql.DB, error) {
+	db, err := sql.Open("pgx", cfg.DatabaseDSN)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = db.Exec(schema); err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
+func initRepo(
+	cfg *config.Config,
+	db *sql.DB,
+) (repository.Repository, error) {
+	if cfg.DatabaseDSN != "" {
+		return repository.NewInDatabase(db), nil
+	}
+	if cfg.FileStoragePath != "" {
+		repo, err := repository.NewInFile(cfg.FileStoragePath)
+		if err != nil {
+			return nil, err
+		}
+		return repo, nil
+	}
+	return repository.NewInMemory(), nil
+}
+
+var schema = `
+	CREATE TABLE IF NOT EXISTS urls (
+		id serial primary key,
+		base_url text not null unique,
+		short_url text not null 
+	);
+	CREATE TABLE IF NOT EXISTS users_url(
+	  user_id text not null,
+	  url_id int not null references urls(id),
+	  CONSTRAINT unique_url UNIQUE (user_id, url_id)
+	);
+	`

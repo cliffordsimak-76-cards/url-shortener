@@ -1,22 +1,19 @@
 package repository
 
 import (
-	"database/sql"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	_ "github.com/lib/pq"
 	"sync"
 )
 
 type InMemory struct {
-	db        *sql.DB
 	cache     map[string]string
 	userCache map[string][]*model.URL
 	mutex     *sync.Mutex
 }
 
-func NewInMemory(db *sql.DB) Repository {
+func NewInMemory() Repository {
 	return &InMemory{
-		db:        db,
 		cache:     make(map[string]string),
 		userCache: make(map[string][]*model.URL),
 		mutex:     &sync.Mutex{},
@@ -67,11 +64,4 @@ func (s *InMemory) GetAll(
 		return nil, ErrNotFound
 	}
 	return urls, nil
-}
-
-func (s *InMemory) Ping() error {
-	if err := s.db.Ping(); err != nil {
-		return err
-	}
-	return nil
 }

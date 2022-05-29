@@ -1,6 +1,7 @@
 package httphandlers
 
 import (
+	"database/sql"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -14,17 +15,20 @@ import (
 )
 
 type HTTPHandler struct {
-	repository repository.Repository
 	cfg        *config.Config
+	repository repository.Repository
+	db         *sql.DB
 }
 
 func NewHTTPHandler(
-	repository repository.Repository,
 	cfg *config.Config,
+	repository repository.Repository,
+	db *sql.DB,
 ) *HTTPHandler {
 	return &HTTPHandler{
-		repository: repository,
 		cfg:        cfg,
+		repository: repository,
+		db:         db,
 	}
 }
 

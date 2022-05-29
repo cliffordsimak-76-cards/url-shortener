@@ -2,7 +2,6 @@ package repository
 
 import (
 	"bufio"
-	"database/sql"
 	"encoding/json"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	_ "github.com/lib/pq"
@@ -11,7 +10,6 @@ import (
 )
 
 type InFile struct {
-	db        *sql.DB
 	cache     map[string]string
 	userCache map[string][]*model.URL
 	encoder   *json.Encoder
@@ -19,7 +17,6 @@ type InFile struct {
 }
 
 func NewInFile(
-	db *sql.DB,
 	filePath string,
 ) (Repository, error) {
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0777)
@@ -39,7 +36,6 @@ func NewInFile(
 	}
 
 	return &InFile{
-		db:        db,
 		cache:     cache,
 		userCache: make(map[string][]*model.URL),
 		encoder:   json.NewEncoder(file),
@@ -94,11 +90,4 @@ func (s *InFile) GetAll(
 		return nil, ErrNotFound
 	}
 	return urls, nil
-}
-
-func (s *InFile) Ping() error {
-	if err := s.db.Ping(); err != nil {
-		return err
-	}
-	return nil
 }

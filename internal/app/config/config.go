@@ -35,6 +35,7 @@ func parseFlags(cfg *Config) {
 	flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "address to listen on")
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "base URL for short link")
 	flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "file storage path")
+	flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "database address")
 	flag.Parse()
 }
 

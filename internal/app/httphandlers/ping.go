@@ -7,11 +7,9 @@ import (
 )
 
 func (h *HTTPHandler) Ping(c echo.Context) error {
-	err := h.repository.Ping()
-	if err != nil {
+	if err := h.db.Ping(); err != nil {
 		log.Error("error db ping: ", err)
 		return c.String(http.StatusInternalServerError, "error ping")
 	}
-
 	return c.NoContent(http.StatusOK)
 }
