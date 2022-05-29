@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/google/uuid v1.3.0
 	github.com/jackc/pgconn v1.12.1
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v4 v4.16.1

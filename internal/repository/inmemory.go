@@ -21,25 +21,24 @@ func NewInMemory() Repository {
 }
 
 func (s *InMemory) Create(
-	userID string,
-	id string,
-	url string,
+	url *model.URL,
 ) error {
-	if _, ok := s.cache[id]; ok {
+	if _, ok := s.cache[url.Short]; ok {
 		return ErrAlreadyExists
 	}
 	s.mutex.Lock()
-	s.cache[id] = url
-	_, ok := s.userCache[userID]
+	s.cache[url.Short] = url.Original
+	_, ok := s.userCache[url.UserID]
 	if !ok {
-		s.userCache[userID] = make([]*model.URL, 0)
+		s.userCache[url.UserID] = make([]*model.URL, 0)
 	}
-	s.userCache[userID] = append(s.userCache[userID], &model.URL{
-		Short:    id,
-		Original: url,
-	})
+	s.userCache[url.UserID] = append(s.userCache[url.UserID], url)
 	s.mutex.Unlock()
 	return nil
+}
+
+func (s *InMemory) CreateBatch(urlModels []*model.URL) error {
+	panic("implement me")
 }
 
 func (s *InMemory) Get(

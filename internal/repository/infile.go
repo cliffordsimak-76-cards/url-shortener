@@ -45,28 +45,30 @@ func NewInFile(
 }
 
 func (s *InFile) Create(
-	userID string,
-	id string,
-	url string,
+	urlModel *model.URL,
 ) error {
-	if _, ok := s.cache[id]; ok {
+	if _, ok := s.cache[urlModel.Short]; ok {
 		return ErrAlreadyExists
 	}
 	s.mutex.Lock()
-	s.cache[id] = url
-	_, ok := s.userCache[userID]
+	s.cache[urlModel.Short] = urlModel.Original
+	_, ok := s.userCache[urlModel.UserID]
 	if !ok {
-		s.userCache[userID] = make([]*model.URL, 0)
+		s.userCache[urlModel.UserID] = make([]*model.URL, 0)
 	}
-	s.userCache[userID] = append(s.userCache[userID], &model.URL{
-		Short:    id,
-		Original: url,
+	s.userCache[urlModel.UserID] = append(s.userCache[urlModel.UserID], &model.URL{
+		Short:    urlModel.Short,
+		Original: urlModel.Original,
 	})
 	s.mutex.Unlock()
 
 	data := make(map[string]string, 1)
-	data[id] = url
+	data[urlModel.Short] = urlModel.Original
 	return s.encoder.Encode(&data)
+}
+
+func (s *InFile) CreateBatch(urlModels []*model.URL) error {
+	panic("implement me")
 }
 
 func (s *InFile) Get(

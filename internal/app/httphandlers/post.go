@@ -1,7 +1,9 @@
 package httphandlers
 
 import (
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers/adapters"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"io"
 	"net/http"
 )
@@ -26,8 +28,10 @@ func (h *HTTPHandler) Post(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	urlID, err := h.generateURLID(userID, URL)
+	urlModel := adapters.ToModel(userID, URL)
+	urlID, err := h.create(urlModel)
 	if err != nil {
+		log.Error(err)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 

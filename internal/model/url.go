@@ -1,6 +1,8 @@
 package model
 
 type URL struct {
-	Short    string
-	Original string
+	CorrelationID string
+	UserID        string
+	Original      string
+	Short         string
 }

@@ -32,6 +32,7 @@ func Run(cfg *config.Config) error {
 	e.GET("/api/user/urls", httpHandler.GetAll)
 	e.POST("/", httpHandler.Post)
 	e.POST("/api/shorten", httpHandler.Shorten)
+	e.POST("/api/shorten/batch", httpHandler.Batch)
 	e.Use(middleware.Decompress)
 	e.Use(middleware.Compress)
 	e.Use(middleware.Cookie)

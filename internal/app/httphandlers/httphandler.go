@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/gommon/log"
 	"net/http"
@@ -32,20 +32,32 @@ func NewHTTPHandler(
 	}
 }
 
-func (h *HTTPHandler) generateURLID(
-	userID string,
-	URL string,
+func (h *HTTPHandler) create(
+	urlModel *model.URL,
 ) (string, error) {
-	urlID := utils.StringToMD5(URL)
-	err := h.repository.Create(userID, urlID, URL)
+	err := h.repository.Create(urlModel)
 	if err != nil {
+		log.Error(err)
 		if errors.Is(err, repository.ErrAlreadyExists) {
 			return "", err
 		}
-		log.Error(err)
 		return "", fmt.Errorf("error create in db")
 	}
-	return urlID, nil
+	return urlModel.Short, nil
+}
+
+func (h *HTTPHandler) createBatch(
+	urlModels []*model.URL,
+) ([]*model.URL, error) {
+	err := h.repository.CreateBatch(urlModels)
+	if err != nil {
+		log.Error(err)
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("error create in db")
+	}
+	return urlModels, nil
 }
 
 func (h *HTTPHandler) buildURL(id string) string {

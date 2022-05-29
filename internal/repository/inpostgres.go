@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
@@ -12,6 +13,7 @@ import (
 
 var createTableQuery = `
 	create table if not exists urls (
+	    correlation_id text unique,
 	    user_id text not null,
 		base_url text not null unique,
 		url_id text not null
@@ -34,15 +36,31 @@ func NewInPostgres(db *sql.DB) Repository {
 }
 
 func (s *InPostgres) Create(
-	userID string,
-	id string,
-	url string,
+	urlModel *model.URL,
 ) error {
-	_, err := s.db.Query(
-		"insert into urls (user_id, base_url, url_id) VALUES ($1, $2,$3)",
-		userID, url, id,
+	ctx := context.Background()
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.PrepareContext(
+		ctx,
+		"INSERT INTO urls(correlation_id, user_id, base_url, url_id) VALUES($1,$2,$3,$4)",
 	)
 	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	if _, err = stmt.ExecContext(
+		ctx,
+		urlModel.CorrelationID,
+		urlModel.UserID,
+		urlModel.Original,
+		urlModel.Short,
+	); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
@@ -53,7 +71,46 @@ func (s *InPostgres) Create(
 		return err
 	}
 
-	return nil
+	return tx.Commit()
+}
+
+func (s *InPostgres) CreateBatch(urlModels []*model.URL) error {
+	ctx := context.Background()
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.PrepareContext(
+		ctx,
+		"INSERT INTO urls(correlation_id, user_id, base_url, url_id) VALUES($1,$2,$3,$4)",
+	)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, urlModel := range urlModels {
+		if _, err = stmt.ExecContext(
+			ctx,
+			urlModel.CorrelationID,
+			urlModel.UserID,
+			urlModel.Original,
+			urlModel.Short,
+		); err != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(err, &pgErr) {
+				switch pgErr.Code {
+				case pgerrcode.UniqueViolation:
+					return ErrAlreadyExists
+				}
+			}
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
 func (s *InPostgres) Get(
