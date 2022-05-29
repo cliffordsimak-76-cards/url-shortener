@@ -6,12 +6,12 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
-	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/labstack/echo/v4"
 )
 
 func Run(cfg *config.Config) error {
-	db, err := sql.Open("postgres", cfg.DatabaseDSN)
+	db, err := sql.Open("pgx", cfg.DatabaseDSN)
 	if err != nil {
 		return err
 	}
