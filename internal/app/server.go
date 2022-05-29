@@ -8,11 +8,14 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 func Run(cfg *config.Config) error {
 	db, err := sql.Open("pgx", cfg.DatabaseDSN)
 	if err != nil {
+		log.Error(err)
+		log.Fatal(err)
 		return err
 	}
 
