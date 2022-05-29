@@ -6,12 +6,11 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
-	_ "github.com/jackc/pgerrcode"
 	"log"
 	"sync"
 )
 
-var schema = `
+var createTableQuery = `
 	create table if not exists urls (
 	    user_id text not null,
 		base_url text not null unique,
@@ -25,7 +24,7 @@ type InPostgres struct {
 }
 
 func NewInPostgres(db *sql.DB) Repository {
-	if _, err := db.Exec(schema); err != nil {
+	if _, err := db.Exec(createTableQuery); err != nil {
 		log.Fatal(err)
 	}
 	return &InPostgres{
@@ -39,7 +38,10 @@ func (s *InPostgres) Create(
 	id string,
 	url string,
 ) error {
-	_, err := s.db.Query("insert into urls (user_id, base_url, url_id) VALUES ($1, $2,$3)", userID, url, id)
+	_, err := s.db.Query(
+		"insert into urls (user_id, base_url, url_id) VALUES ($1, $2,$3)",
+		userID, url, id,
+	)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -58,7 +60,10 @@ func (s *InPostgres) Get(
 	id string,
 ) (string, error) {
 	var URL string
-	err := s.db.QueryRow("select base_url from urls where url_id=$1", id).Scan(&URL)
+	err := s.db.QueryRow(
+		"select base_url from urls where url_id=$1",
+		id,
+	).Scan(&URL)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return "", ErrNotFound
@@ -71,9 +76,10 @@ func (s *InPostgres) Get(
 func (s *InPostgres) GetAll(
 	userID string,
 ) ([]*model.URL, error) {
-
 	rows, err := s.db.Query(
-		"select base_url, url_id from urls where user_id=$1", userID)
+		"select base_url, url_id from urls where user_id=$1",
+		userID,
+	)
 	if err != nil {
 		return nil, err
 	}
