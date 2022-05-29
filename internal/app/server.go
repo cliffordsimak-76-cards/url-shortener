@@ -27,7 +27,7 @@ func Run(cfg *config.Config) error {
 	httpHandler := httphandlers.NewHTTPHandler(repo, cfg)
 
 	e := echo.New()
-	e.GET("/ping", httpHandler.Ping)
+	//e.GET("/ping", httpHandler.Ping)
 	e.GET("/:id", httpHandler.Get)
 	e.GET("/api/user/urls", httpHandler.GetAll)
 	e.POST("/", httpHandler.Post)
