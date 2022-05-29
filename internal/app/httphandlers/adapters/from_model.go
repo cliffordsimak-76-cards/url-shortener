@@ -29,3 +29,19 @@ func ToBatchResponse(urlModels []*model.URL) []*BatchResponseModel {
 	}
 	return result
 }
+
+type GetAllResponseModel struct {
+	Short    string `json:"short_url"`
+	Original string `json:"original_url"`
+}
+
+func ToGetAllResponse(urlModels []*model.URL) []*GetAllResponseModel {
+	var result []*GetAllResponseModel
+	for _, urlModel := range urlModels {
+		result = append(result, &GetAllResponseModel{
+			Short:    urlModel.Short,
+			Original: urlModel.Original,
+		})
+	}
+	return result
+}
