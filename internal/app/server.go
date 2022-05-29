@@ -44,6 +44,9 @@ func Run(cfg *config.Config) error {
 func initDB(
 	cfg *config.Config,
 ) (*sql.DB, error) {
+	if cfg.DatabaseDSN == "" {
+		return nil, nil
+	}
 	db, err := sql.Open("pgx", cfg.DatabaseDSN)
 	if err != nil {
 		return nil, err
