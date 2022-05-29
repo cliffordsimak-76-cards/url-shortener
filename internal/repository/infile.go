@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	_ "github.com/lib/pq"
+	"log"
 	"os"
 	"sync"
 )
@@ -21,7 +22,7 @@ func NewInFile(
 ) (Repository, error) {
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0777)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
 	cache := make(map[string]string)
@@ -30,7 +31,7 @@ func NewInFile(
 		for scanner.Scan() {
 			err = json.Unmarshal(scanner.Bytes(), &cache)
 			if err != nil {
-				return nil, err
+				log.Fatal(err)
 			}
 		}
 	}

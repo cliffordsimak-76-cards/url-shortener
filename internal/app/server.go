@@ -62,11 +62,7 @@ func initRepo(
 		return repository.NewInPostgres(db), nil
 	}
 	if cfg.FileStoragePath != "" {
-		repo, err := repository.NewInFile(cfg.FileStoragePath)
-		if err != nil {
-			return nil, err
-		}
-		return repo, nil
+		return repository.NewInFile(cfg.FileStoragePath)
 	}
 	return repository.NewInMemory(), nil
 }
