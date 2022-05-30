@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
+	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
 	"sync"
 )
@@ -13,6 +14,7 @@ type InMemory struct {
 }
 
 func NewInMemory() Repository {
+	log.Info("start memory repo")
 	return &InMemory{
 		cache:     make(map[string]string),
 		userCache: make(map[string][]*model.URL),

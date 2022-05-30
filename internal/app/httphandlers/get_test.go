@@ -1,6 +1,7 @@
 package httphandlers
 
 import (
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -51,7 +52,11 @@ func TestGet(t *testing.T) {
 			ctx.SetParamNames("id")
 			ctx.SetParamValues(tt.value)
 
-			te.inMemoryRepo.Create("226d0f8a5fa9180d", "a506e095-b901-47db-8b8f-b23f9b1b9e1b", "https://www.yandex.ru")
+			te.inMemoryRepo.Create(&model.URL{
+				UserID:   "226d0f8a5fa9180d",
+				Original: "https://www.yandex.ru",
+				Short:    "a506e095-b901-47db-8b8f-b23f9b1b9e1b",
+			})
 
 			h := te.httpHandler.Get
 			if assert.NoError(t, h(ctx)) {

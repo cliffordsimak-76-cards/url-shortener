@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"encoding/json"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
+	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
-	"log"
 	"os"
 	"sync"
 )
@@ -22,7 +22,7 @@ func NewInFile(
 ) (Repository, error) {
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0777)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	cache := make(map[string]string)
@@ -31,11 +31,12 @@ func NewInFile(
 		for scanner.Scan() {
 			err = json.Unmarshal(scanner.Bytes(), &cache)
 			if err != nil {
-				log.Fatal(err)
+				return nil, err
 			}
 		}
 	}
 
+	log.Info("start file repo")
 	return &InFile{
 		cache:     cache,
 		userCache: make(map[string][]*model.URL),

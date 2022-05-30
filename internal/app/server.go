@@ -52,6 +52,9 @@ func initDB(
 	if err != nil {
 		return nil, err
 	}
+	if _, err = db.Exec(repository.CreateTableQuery); err != nil {
+		return nil, err
+	}
 	return db, nil
 }
 
@@ -60,7 +63,7 @@ func initRepo(
 	db *sql.DB,
 ) (repository.Repository, error) {
 	if cfg.DatabaseDSN != "" {
-		return repository.NewInPostgres(db), nil
+		return repository.NewInDatabase(db), nil
 	}
 	if cfg.FileStoragePath != "" {
 		return repository.NewInFile(cfg.FileStoragePath)

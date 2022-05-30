@@ -1,6 +1,8 @@
 package httphandlers
 
 import (
+	"errors"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"net/http"
@@ -18,13 +20,12 @@ func (h *HTTPHandler) GetAll(c echo.Context) error {
 	}
 
 	urlModels, err := h.repository.GetAll(userID)
+	if len(urlModels) == 0 || errors.Is(err, repository.ErrNotFound) {
+		return c.NoContent(http.StatusNoContent)
+	}
 	if err != nil {
 		log.Error(err)
 		return c.String(http.StatusBadRequest, "error get all")
-	}
-
-	if len(urlModels) == 0 {
-		return c.NoContent(http.StatusNoContent)
 	}
 
 	var response []*URL

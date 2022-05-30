@@ -7,11 +7,11 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
-	"log"
+	"github.com/labstack/gommon/log"
 	"sync"
 )
 
-var createTableQuery = `
+var CreateTableQuery = `
 	create table if not exists urls (
 	    correlation_id text unique,
 	    user_id text not null,
@@ -20,22 +20,20 @@ var createTableQuery = `
 	);
 	`
 
-type InPostgres struct {
+type InDatabase struct {
 	db    *sql.DB
 	mutex *sync.Mutex
 }
 
-func NewInPostgres(db *sql.DB) Repository {
-	if _, err := db.Exec(createTableQuery); err != nil {
-		log.Fatal(err)
-	}
-	return &InPostgres{
+func NewInDatabase(db *sql.DB) Repository {
+	log.Info("start database repo")
+	return &InDatabase{
 		db:    db,
 		mutex: &sync.Mutex{},
 	}
 }
 
-func (s *InPostgres) Create(
+func (s *InDatabase) Create(
 	urlModel *model.URL,
 ) error {
 	ctx := context.Background()
@@ -74,7 +72,7 @@ func (s *InPostgres) Create(
 	return tx.Commit()
 }
 
-func (s *InPostgres) CreateBatch(urlModels []*model.URL) error {
+func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
 	ctx := context.Background()
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -113,7 +111,7 @@ func (s *InPostgres) CreateBatch(urlModels []*model.URL) error {
 	return tx.Commit()
 }
 
-func (s *InPostgres) Get(
+func (s *InDatabase) Get(
 	id string,
 ) (string, error) {
 	var URL string
@@ -130,7 +128,7 @@ func (s *InPostgres) Get(
 	return URL, nil
 }
 
-func (s *InPostgres) GetAll(
+func (s *InDatabase) GetAll(
 	userID string,
 ) ([]*model.URL, error) {
 	rows, err := s.db.Query(
