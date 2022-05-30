@@ -111,26 +111,22 @@ func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
 	return tx.Commit()
 }
 
-func (s *InDatabase) Get(
-	id string,
-) (string, error) {
-	var URL string
+func (s *InDatabase) Get(id string) (*model.URL, error) {
+	URL := &model.URL{}
 	err := s.db.QueryRow(
-		"select base_url from urls where url_id=$1",
+		"select base_url, url_id from urls where url_id=$1",
 		id,
-	).Scan(&URL)
+	).Scan(&URL.Original, &URL.Short)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", ErrNotFound
+			return nil, ErrNotFound
 		}
-		return "", err
+		return nil, err
 	}
 	return URL, nil
 }
 
-func (s *InDatabase) GetAll(
-	userID string,
-) ([]*model.URL, error) {
+func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
 	rows, err := s.db.Query(
 		"select base_url, url_id from urls where user_id=$1",
 		userID,

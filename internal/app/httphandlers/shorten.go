@@ -2,13 +2,20 @@ package httphandlers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers/adapters"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"net/http"
 )
 
 type ShortenRequest struct {
 	URL string `json:"url"`
+}
+
+type ShortenResponse struct {
+	Result string `json:"result"`
 }
 
 func (h *HTTPHandler) Shorten(c echo.Context) error {
@@ -27,15 +34,25 @@ func (h *HTTPHandler) Shorten(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	URL := adapters.ToModel(userID, request.URL)
-	urlID, err := h.create(URL)
+	urlModel := adapters.ToModel(userID, request.URL)
+	urlID, err := h.create(urlModel)
+	if errors.Is(err, repository.ErrAlreadyExists) {
+		return h.SendResponse(c, http.StatusConflict, urlID.Short)
+	}
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		log.Error(err)
+		return c.String(http.StatusInternalServerError, "error create in db")
 	}
 
+	return h.SendResponse(c, http.StatusCreated, urlModel.Short)
+}
+
+func (h *HTTPHandler) SendResponse(c echo.Context, code int, str string) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	return c.JSON(
-		http.StatusCreated,
-		adapters.ToShortenResponse(h.buildURL(urlID)),
+		code,
+		&ShortenResponse{
+			Result: h.buildURL(str),
+		},
 	)
 }

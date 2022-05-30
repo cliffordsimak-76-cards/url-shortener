@@ -43,21 +43,20 @@ func (s *InMemory) CreateBatch(urlModels []*model.URL) error {
 	panic("implement me")
 }
 
-func (s *InMemory) Get(
-	id string,
-) (string, error) {
+func (s *InMemory) Get(id string) (*model.URL, error) {
 	s.mutex.Lock()
 	URL, ok := s.cache[id]
 	s.mutex.Unlock()
 	if !ok {
-		return "", ErrNotFound
+		return nil, ErrNotFound
 	}
-	return URL, nil
+	return &model.URL{
+		Original: URL,
+		Short:    id,
+	}, nil
 }
 
-func (s *InMemory) GetAll(
-	userID string,
-) ([]*model.URL, error) {
+func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
 	s.mutex.Lock()
 	urls, ok := s.userCache[userID]
 	s.mutex.Unlock()

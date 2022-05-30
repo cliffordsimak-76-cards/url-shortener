@@ -74,14 +74,17 @@ func (s *InFile) CreateBatch(urlModels []*model.URL) error {
 
 func (s *InFile) Get(
 	id string,
-) (string, error) {
+) (*model.URL, error) {
 	s.mutex.Lock()
 	URL, ok := s.cache[id]
 	s.mutex.Unlock()
 	if !ok {
-		return "", ErrNotFound
+		return nil, ErrNotFound
 	}
-	return URL, nil
+	return &model.URL{
+		Original: URL,
+		Short:    id,
+	}, nil
 }
 
 func (s *InFile) GetAll(

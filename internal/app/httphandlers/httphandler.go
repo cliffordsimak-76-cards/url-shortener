@@ -32,23 +32,22 @@ func NewHTTPHandler(
 	}
 }
 
-func (h *HTTPHandler) create(
-	urlModel *model.URL,
-) (string, error) {
+func (h *HTTPHandler) create(urlModel *model.URL) (*model.URL, error) {
 	err := h.repository.Create(urlModel)
-	if err != nil {
-		log.Error(err)
-		if errors.Is(err, repository.ErrAlreadyExists) {
-			return "", err
+	if errors.Is(err, repository.ErrAlreadyExists) {
+		urlModel, getErr := h.repository.Get(urlModel.Short)
+		if getErr != nil {
+			return nil, fmt.Errorf("error get in db")
 		}
-		return "", fmt.Errorf("error create in db")
+		return urlModel, err
 	}
-	return urlModel.Short, nil
+	if err != nil {
+		return nil, fmt.Errorf("error create in db")
+	}
+	return urlModel, nil
 }
 
-func (h *HTTPHandler) createBatch(
-	urlModels []*model.URL,
-) ([]*model.URL, error) {
+func (h *HTTPHandler) createBatch(urlModels []*model.URL) ([]*model.URL, error) {
 	err := h.repository.CreateBatch(urlModels)
 	if err != nil {
 		log.Error(err)

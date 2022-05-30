@@ -9,7 +9,7 @@ import (
 )
 
 func (h *HTTPHandler) Get(c echo.Context) error {
-	URL, err := h.repository.Get(c.Param("id"))
+	url, err := h.repository.Get(c.Param("id"))
 	if err != nil {
 		log.Error(err)
 		if errors.Is(err, repository.ErrNotFound) {
@@ -18,6 +18,6 @@ func (h *HTTPHandler) Get(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "error get")
 	}
 
-	c.Response().Header().Set(echo.HeaderLocation, URL)
+	c.Response().Header().Set(echo.HeaderLocation, url.Original)
 	return c.NoContent(http.StatusTemporaryRedirect)
 }

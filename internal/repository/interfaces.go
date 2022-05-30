@@ -8,7 +8,7 @@ import (
 type Repository interface {
 	Create(urlModel *model.URL) error
 	CreateBatch(urlModels []*model.URL) error
-	Get(id string) (string, error)
+	Get(id string) (*model.URL, error)
 	GetAll(userID string) ([]*model.URL, error)
 }
 
