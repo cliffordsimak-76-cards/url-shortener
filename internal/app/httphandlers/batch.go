@@ -3,11 +3,17 @@ package httphandlers
 import (
 	"encoding/json"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers/adapters"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"net/http"
 	"net/url"
 )
+
+type BatchResponseModel struct {
+	CorrelationID string `json:"correlation_id"`
+	Short         string `json:"short_url"`
+}
 
 func (h *HTTPHandler) Batch(c echo.Context) error {
 	var request []*adapters.BatchRequestModel
@@ -33,7 +39,7 @@ func (h *HTTPHandler) Batch(c echo.Context) error {
 	}
 
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	return c.JSON(http.StatusCreated, adapters.ToBatchResponse(createdModels))
+	return c.JSON(http.StatusCreated, h.ToBatchResponse(createdModels))
 }
 
 func validateURLBatch(request []*adapters.BatchRequestModel) error {
@@ -44,4 +50,15 @@ func validateURLBatch(request []*adapters.BatchRequestModel) error {
 		}
 	}
 	return nil
+}
+
+func (h *HTTPHandler) ToBatchResponse(urlModels []*model.URL) []*BatchResponseModel {
+	var result []*BatchResponseModel
+	for _, urlModel := range urlModels {
+		result = append(result, &BatchResponseModel{
+			CorrelationID: urlModel.CorrelationID,
+			Short:         h.buildURL(urlModel.Short),
+		})
+	}
+	return result
 }
