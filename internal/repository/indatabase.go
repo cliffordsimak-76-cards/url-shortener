@@ -131,7 +131,7 @@ func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
 		"select base_url, url_id from urls where user_id=$1",
 		userID,
 	)
-	if err != nil {
+	if rows.Err() != nil {
 		return nil, err
 	}
 	defer rows.Close()
