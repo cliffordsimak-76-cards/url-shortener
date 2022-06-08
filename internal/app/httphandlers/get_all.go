@@ -28,7 +28,7 @@ func (h *HTTPHandler) GetAll(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "error get all")
 	}
 
-	var response []*URL
+	response := make([]*URL, 0, len(urlModels))
 	for _, url := range urlModels {
 		response = append(response, &URL{
 			Short:    h.buildURL(url.Short),

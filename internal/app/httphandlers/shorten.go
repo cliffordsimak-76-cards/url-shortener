@@ -36,11 +36,11 @@ func (h *HTTPHandler) Shorten(c echo.Context) error {
 
 	urlModel := adapters.ToModel(userID, request.URL)
 	urlID, err := h.create(urlModel)
-	if errors.Is(err, repository.ErrAlreadyExists) {
-		return h.SendResponse(c, http.StatusConflict, urlID.Short)
-	}
 	if err != nil {
-		log.Error(err)
+		log.Errorf("error create in db: %s", err)
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return h.SendResponse(c, http.StatusConflict, urlID.Short)
+		}
 		return c.String(http.StatusInternalServerError, "error create in db")
 	}
 

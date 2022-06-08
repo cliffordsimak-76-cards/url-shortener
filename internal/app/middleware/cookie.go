@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
@@ -12,15 +13,20 @@ import (
 	"net/http"
 )
 
+var ErrShortCookieValue = errors.New("error cookie value is too short")
+
 func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
-		cookie, _ := req.Cookie(config.UserCookieName)
+		cookie, err := req.Cookie(config.UserCookieName)
 		if cookie != nil {
 			err := validateCookie(cookie.Value)
-			if err == nil {
-				return next(c)
+			if err != nil {
+				if errors.Is(err, ErrShortCookieValue) {
+					return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+				}
 			}
+			return next(c)
 		}
 
 		newCookie, err := generateCookie()
@@ -35,11 +41,20 @@ func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 
 func validateCookie(cookieValue string) error {
 	data, err := hex.DecodeString(cookieValue)
+	if len(data) == 0 {
+		return ErrShortCookieValue
+	}
 	if err != nil {
 		return fmt.Errorf("cant decode cookie value")
 	}
 	h := hmac.New(sha256.New, []byte(config.SecretKey))
-	h.Write(data[:config.UserIDLen])
+	n, err := h.Write(data[:config.UserIDLen])
+	if err != nil {
+		return err
+	}
+	if n != config.UserIDLen {
+		return fmt.Errorf("wrong number of bytes written")
+	}
 	sign := h.Sum(nil)
 	if !hmac.Equal(sign, data[config.UserIDLen:]) {
 		return fmt.Errorf("wrong cookie value")

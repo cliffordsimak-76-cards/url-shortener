@@ -15,9 +15,6 @@ func (h *HTTPHandler) Post(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
-	if len(body) == 0 {
-		return c.String(http.StatusBadRequest, "body is empty")
-	}
 
 	userID, err := extractUserID(c.Request())
 	if err != nil {
@@ -32,11 +29,11 @@ func (h *HTTPHandler) Post(c echo.Context) error {
 
 	urlModel := adapters.ToModel(userID, URL)
 	urlModel, err = h.create(urlModel)
-	if errors.Is(err, repository.ErrAlreadyExists) {
-		return c.String(http.StatusConflict, h.buildURL(urlModel.Short))
-	}
 	if err != nil {
-		log.Error(err)
+		log.Errorf("error post: %s", err)
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return c.String(http.StatusConflict, h.buildURL(urlModel.Short))
+		}
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 

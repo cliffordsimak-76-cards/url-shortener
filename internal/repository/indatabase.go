@@ -8,7 +8,6 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/labstack/gommon/log"
-	"sync"
 )
 
 var CreateTableQuery = `
@@ -21,15 +20,13 @@ var CreateTableQuery = `
 	`
 
 type InDatabase struct {
-	db    *sql.DB
-	mutex *sync.Mutex
+	db *sql.DB
 }
 
 func NewInDatabase(db *sql.DB) Repository {
 	log.Info("start database repo")
 	return &InDatabase{
-		db:    db,
-		mutex: &sync.Mutex{},
+		db: db,
 	}
 }
 

@@ -78,7 +78,7 @@ func extractUserID(req *http.Request) (string, error) {
 	}
 	data, err := hex.DecodeString(cookie.Value)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("error decode cookie: %s", err)
 		return "", fmt.Errorf("error decode cookie")
 	}
 	return hex.EncodeToString(data[:8]), nil

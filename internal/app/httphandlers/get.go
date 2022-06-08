@@ -11,11 +11,11 @@ import (
 func (h *HTTPHandler) Get(c echo.Context) error {
 	url, err := h.repository.Get(c.Param("id"))
 	if err != nil {
-		log.Error(err)
+		log.Errorf("error get: %s", err)
 		if errors.Is(err, repository.ErrNotFound) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		return c.String(http.StatusBadRequest, "error get")
+		return c.String(http.StatusInternalServerError, "error get")
 	}
 
 	c.Response().Header().Set(echo.HeaderLocation, url.Original)
