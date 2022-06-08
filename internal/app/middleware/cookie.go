@@ -18,7 +18,7 @@ var ErrShortCookieValue = errors.New("error cookie value is too short")
 func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
-		cookie, err := req.Cookie(config.UserCookieName)
+		cookie, _ := req.Cookie(config.UserCookieName)
 		if cookie != nil {
 			err := validateCookie(cookie.Value)
 			if err != nil {
