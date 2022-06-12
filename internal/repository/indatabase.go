@@ -15,7 +15,8 @@ var CreateTableQuery = `
 	    correlation_id text unique,
 	    user_id text not null,
 		base_url text not null unique,
-		url_id text not null
+		url_id text not null,
+		deleted bool default false
 	);
 	`
 
@@ -111,9 +112,9 @@ func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
 func (s *InDatabase) Get(id string) (*model.URL, error) {
 	URL := &model.URL{}
 	err := s.db.QueryRow(
-		"select base_url, url_id from urls where url_id=$1",
+		"select base_url, url_id, deleted from urls where url_id=$1",
 		id,
-	).Scan(&URL.Original, &URL.Short)
+	).Scan(&URL.Original, &URL.Short, &URL.Deleted)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, ErrNotFound
