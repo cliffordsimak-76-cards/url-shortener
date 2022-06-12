@@ -20,8 +20,9 @@ func newTestEnv(t *testing.T) *testEnv {
 
 	te.inMemoryRepo = repository.NewInMemory()
 	te.httpHandler = NewHTTPHandler(
-		te.inMemoryRepo,
 		cfg,
+		te.inMemoryRepo,
+		nil,
 	)
 	return te
 }

@@ -1,35 +1,72 @@
 package app
 
 import (
+	"database/sql"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 func Run(cfg *config.Config) error {
-	var repo repository.Repository
-	var err error
-
-	if cfg.FileStoragePath != "" {
-		repo, err = repository.NewInFile(cfg.FileStoragePath)
-		if err != nil {
-			return err
-		}
-	} else {
-		repo = repository.NewInMemory()
+	db, err := initDB(cfg)
+	if err != nil {
+		log.Fatal(err)
+		return err
 	}
-	httpHandler := httphandlers.NewHTTPHandler(repo, cfg)
+
+	repo, err := initRepo(cfg, db)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	httpHandler := httphandlers.NewHTTPHandler(cfg, repo, db)
 
 	e := echo.New()
-	e.GET("/:id", httpHandler.Get())
-	e.POST("/", httpHandler.Post())
-	e.POST("/api/shorten", httpHandler.Shorten())
+	e.GET("/ping", httpHandler.Ping)
+	e.GET("/:id", httpHandler.Get)
+	e.GET("/api/user/urls", httpHandler.GetAll)
+	e.POST("/", httpHandler.Post)
+	e.POST("/api/shorten", httpHandler.Shorten)
+	e.POST("/api/shorten/batch", httpHandler.Batch)
+	e.Use(middleware.Cookie)
 	e.Use(middleware.Decompress)
 	e.Use(middleware.Compress)
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
 
 	return nil
+}
+
+func initDB(
+	cfg *config.Config,
+) (*sql.DB, error) {
+	if cfg.DatabaseDSN == "" {
+		return nil, nil
+	}
+	db, err := sql.Open("pgx", cfg.DatabaseDSN)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = db.Exec(repository.CreateTableQuery); err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
+func initRepo(
+	cfg *config.Config,
+	db *sql.DB,
+) (repository.Repository, error) {
+	if cfg.DatabaseDSN != "" {
+		return repository.NewInDatabase(db), nil
+	}
+	if cfg.FileStoragePath != "" {
+		return repository.NewInFile(cfg.FileStoragePath)
+	}
+	return repository.NewInMemory(), nil
 }

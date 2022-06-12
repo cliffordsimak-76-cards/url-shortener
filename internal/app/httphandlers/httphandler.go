@@ -1,29 +1,66 @@
 package httphandlers
 
 import (
+	"database/sql"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
-	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/gommon/log"
+	"net/http"
 	"net/url"
 	"strings"
 )
 
 type HTTPHandler struct {
-	repository repository.Repository
 	cfg        *config.Config
+	repository repository.Repository
+	db         *sql.DB
 }
 
 func NewHTTPHandler(
-	repository repository.Repository,
 	cfg *config.Config,
+	repository repository.Repository,
+	db *sql.DB,
 ) *HTTPHandler {
 	return &HTTPHandler{
-		repository: repository,
 		cfg:        cfg,
+		repository: repository,
+		db:         db,
 	}
+}
+
+func (h *HTTPHandler) create(urlModel *model.URL) (*model.URL, error) {
+	err := h.repository.Create(urlModel)
+	if errors.Is(err, repository.ErrAlreadyExists) {
+		urlModel, getErr := h.repository.Get(urlModel.Short)
+		if getErr != nil {
+			return nil, fmt.Errorf("error get in db")
+		}
+		return urlModel, err
+	}
+	if err != nil {
+		return nil, fmt.Errorf("error create in db")
+	}
+	return urlModel, nil
+}
+
+func (h *HTTPHandler) createBatch(urlModels []*model.URL) ([]*model.URL, error) {
+	err := h.repository.CreateBatch(urlModels)
+	if err != nil {
+		log.Error(err)
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("error create in db")
+	}
+	return urlModels, nil
+}
+
+func (h *HTTPHandler) buildURL(id string) string {
+	return strings.Join([]string{h.cfg.BaseURL, id}, "/")
 }
 
 func validateURL(rawURL string) error {
@@ -34,19 +71,15 @@ func validateURL(rawURL string) error {
 	return nil
 }
 
-func (h *HTTPHandler) generateUrlID(URL string) (string, error) {
-	urlID := utils.StringToMD5(URL)
-	err := h.repository.Create(urlID, URL)
+func extractUserID(req *http.Request) (string, error) {
+	cookie, err := req.Cookie(config.UserCookieName)
 	if err != nil {
-		if errors.Is(err, repository.ErrAlreadyExists) {
-			return "", err
-		}
-		log.Error(err)
-		return "", fmt.Errorf("error create in db")
+		return "", fmt.Errorf("error read cookie")
 	}
-	return urlID, nil
-}
-
-func (h *HTTPHandler) buildURL(id string) string {
-	return strings.Join([]string{h.cfg.BaseURL, id}, "/")
+	data, err := hex.DecodeString(cookie.Value)
+	if err != nil {
+		log.Errorf("error decode cookie: %s", err)
+		return "", fmt.Errorf("error decode cookie")
+	}
+	return hex.EncodeToString(data[:8]), nil
 }
