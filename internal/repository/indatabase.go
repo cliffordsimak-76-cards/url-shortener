@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
@@ -146,4 +147,27 @@ func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
 	}
 
 	return urls, nil
+}
+
+func (s *InDatabase) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.PrepareContext(
+		ctx,
+		"UPDATE urls SET deleted = true WHERE url_id = any($1) AND user_id = $2",
+	)
+
+	if _, err = stmt.ExecContext(
+		ctx,
+		task.UrlsID,
+		task.UserID,
+	); err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }

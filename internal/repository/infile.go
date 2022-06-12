@@ -2,7 +2,9 @@ package repository
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
@@ -97,4 +99,8 @@ func (s *InFile) GetAll(
 		return nil, ErrNotFound
 	}
 	return urls, nil
+}
+
+func (s *InFile) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+	panic("implement me")
 }
