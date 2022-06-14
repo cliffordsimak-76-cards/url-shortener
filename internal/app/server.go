@@ -1,10 +1,12 @@
 package app
 
 import (
+	"context"
 	"database/sql"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/labstack/echo/v4"
@@ -24,12 +26,18 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
-	httpHandler := httphandlers.NewHTTPHandler(cfg, repo, db)
+	ctx := context.Background()
+	deleteTasks := make(chan workers.DeleteTask, 5)
+	delService := workers.New(repo, deleteTasks)
+	go delService.Run(ctx)
+
+	httpHandler := httphandlers.NewHTTPHandler(cfg, repo, db, deleteTasks)
 
 	e := echo.New()
 	e.GET("/ping", httpHandler.Ping)
 	e.GET("/:id", httpHandler.Get)
 	e.GET("/api/user/urls", httpHandler.GetAll)
+	e.DELETE("/api/user/urls", httpHandler.Delete)
 	e.POST("/", httpHandler.Post)
 	e.POST("/api/shorten", httpHandler.Shorten)
 	e.POST("/api/shorten/batch", httpHandler.Batch)

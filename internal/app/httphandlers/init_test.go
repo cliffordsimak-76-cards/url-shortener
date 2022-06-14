@@ -23,6 +23,7 @@ func newTestEnv(t *testing.T) *testEnv {
 		cfg,
 		te.inMemoryRepo,
 		nil,
+		nil,
 	)
 	return te
 }

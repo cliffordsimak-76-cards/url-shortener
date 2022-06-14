@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/gommon/log"
@@ -18,17 +19,20 @@ type HTTPHandler struct {
 	cfg        *config.Config
 	repository repository.Repository
 	db         *sql.DB
+	deleteCh   chan workers.DeleteTask
 }
 
 func NewHTTPHandler(
 	cfg *config.Config,
 	repository repository.Repository,
 	db *sql.DB,
+	deleteCh chan workers.DeleteTask,
 ) *HTTPHandler {
 	return &HTTPHandler{
 		cfg:        cfg,
 		repository: repository,
 		db:         db,
+		deleteCh:   deleteCh,
 	}
 }
 
