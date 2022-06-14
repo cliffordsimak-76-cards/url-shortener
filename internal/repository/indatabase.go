@@ -160,6 +160,10 @@ func (s *InDatabase) UpdateBatch(ctx context.Context, task workers.DeleteTask) e
 		ctx,
 		"UPDATE urls SET deleted = true WHERE url_id = any($1) AND user_id = $2",
 	)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
 
 	if _, err = stmt.ExecContext(
 		ctx,
