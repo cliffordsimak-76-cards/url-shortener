@@ -5,14 +5,15 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/gommon/log"
-	"net/http"
-	"net/url"
-	"strings"
 )
 
 type HTTPHandler struct {

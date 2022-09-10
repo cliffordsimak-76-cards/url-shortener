@@ -2,12 +2,13 @@ package httphandlers
 
 import (
 	"encoding/json"
+	"net/http"
+	"net/url"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers/adapters"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
-	"net/url"
 )
 
 type BatchResponseModel struct {

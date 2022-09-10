@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"os"
+	"sync"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
-	"os"
-	"sync"
 )
 
 type InFile struct {

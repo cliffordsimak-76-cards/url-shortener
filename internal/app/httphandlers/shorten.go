@@ -3,11 +3,12 @@ package httphandlers
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers/adapters"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
 type ShortenRequest struct {

@@ -2,10 +2,11 @@ package httphandlers
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
 func (h *HTTPHandler) Get(c echo.Context) error {

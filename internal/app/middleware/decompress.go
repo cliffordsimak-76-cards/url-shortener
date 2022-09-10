@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"compress/gzip"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strings"
+
+	"github.com/labstack/echo/v4"
 )
 
 func Decompress(next echo.HandlerFunc) echo.HandlerFunc {

@@ -1,9 +1,10 @@
 package httphandlers
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
 func (h *HTTPHandler) Ping(c echo.Context) error {
