@@ -5,4 +5,5 @@ type URL struct {
 	UserID        string
 	Original      string
 	Short         string
+	Deleted       bool
 }

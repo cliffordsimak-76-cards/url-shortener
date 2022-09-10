@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
@@ -64,4 +66,8 @@ func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
 		return nil, ErrNotFound
 	}
 	return urls, nil
+}
+
+func (s *InMemory) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+	panic("implement me")
 }

@@ -18,6 +18,10 @@ func (h *HTTPHandler) Get(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "error get")
 	}
 
-	c.Response().Header().Set(echo.HeaderLocation, url.Original)
-	return c.NoContent(http.StatusTemporaryRedirect)
+	if url.Deleted {
+		return c.NoContent(http.StatusGone)
+	} else {
+		c.Response().Header().Set(echo.HeaderLocation, url.Original)
+		return c.NoContent(http.StatusTemporaryRedirect)
+	}
 }
