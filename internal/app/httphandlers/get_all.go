@@ -14,6 +14,7 @@ type URL struct {
 	Original string `json:"original_url"`
 }
 
+// GetAll returns all URLs by user.
 func (h *HTTPHandler) GetAll(c echo.Context) error {
 	userID, err := extractUserID(c.Request())
 	if err != nil {

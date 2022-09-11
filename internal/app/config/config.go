@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"fmt"
+
 	"github.com/caarlos0/env"
 )
 
@@ -19,6 +20,8 @@ type Config struct {
 	DatabaseDSN     string `env:"DATABASE_DSN"`
 }
 
+// NewConfig loads 'env' values from environment variables
+// and returns Config struct.
 func NewConfig() (*Config, error) {
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {
@@ -31,6 +34,7 @@ func NewConfig() (*Config, error) {
 	return cfg, nil
 }
 
+// ParseFlags parses the command-line flags from os.Args[1:].
 func parseFlags(cfg *Config) {
 	flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "address to listen on")
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "base URL for short link")
@@ -39,6 +43,7 @@ func parseFlags(cfg *Config) {
 	flag.Parse()
 }
 
+// String returns Config values.
 func (cfg *Config) String() string {
 	return fmt.Sprintf(
 		"SERVER_ADDRESS: %s\n"+

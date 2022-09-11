@@ -19,6 +19,7 @@ type ShortenResponse struct {
 	Result string `json:"result"`
 }
 
+// Shorten creates a shorl URL by URL.
 func (h *HTTPHandler) Shorten(c echo.Context) error {
 	var request *ShortenRequest
 	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {

@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// Get returns URL by ID.
 func (h *HTTPHandler) Get(c echo.Context) error {
 	url, err := h.repository.Get(c.Param("id"))
 	if err != nil {

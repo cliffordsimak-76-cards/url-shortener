@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// Post creates a shorl URL by URL.
 func (h *HTTPHandler) Post(c echo.Context) error {
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {

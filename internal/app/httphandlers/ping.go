@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// Ping returns service state.
 func (h *HTTPHandler) Ping(c echo.Context) error {
 	if h.db == nil {
 		return c.String(http.StatusInternalServerError, "error ping")

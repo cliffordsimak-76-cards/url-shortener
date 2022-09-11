@@ -16,6 +16,7 @@ type BatchResponseModel struct {
 	Short         string `json:"short_url"`
 }
 
+// Batch creates a few short URLs by URLs.
 func (h *HTTPHandler) Batch(c echo.Context) error {
 	var request []*adapters.BatchRequestModel
 	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
