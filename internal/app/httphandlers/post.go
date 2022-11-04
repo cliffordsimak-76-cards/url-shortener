@@ -2,14 +2,16 @@ package httphandlers
 
 import (
 	"errors"
+	"io"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers/adapters"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"io"
-	"net/http"
 )
 
+// Post creates a shorl URL by URL.
 func (h *HTTPHandler) Post(c echo.Context) error {
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {

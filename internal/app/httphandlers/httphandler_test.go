@@ -1,8 +1,9 @@
 package httphandlers
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBuildUrl(t *testing.T) {

@@ -1,13 +1,14 @@
 package httphandlers
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestGet(t *testing.T) {

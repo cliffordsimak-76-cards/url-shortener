@@ -1,11 +1,13 @@
 package httphandlers
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
+// Ping returns service state.
 func (h *HTTPHandler) Ping(c echo.Context) error {
 	if h.db == nil {
 		return c.String(http.StatusInternalServerError, "error ping")

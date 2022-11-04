@@ -2,11 +2,12 @@ package repository
 
 import (
 	"context"
+	"sync"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
-	"sync"
 )
 
 type InMemory struct {

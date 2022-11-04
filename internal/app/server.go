@@ -3,6 +3,9 @@ package app
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
@@ -44,6 +47,10 @@ func Run(cfg *config.Config) error {
 	e.Use(middleware.Cookie)
 	e.Use(middleware.Decompress)
 	e.Use(middleware.Compress)
+
+	go func() {
+		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
+	}()
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
 

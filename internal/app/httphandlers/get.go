@@ -2,12 +2,14 @@ package httphandlers
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
+// Get returns URL by ID.
 func (h *HTTPHandler) Get(c echo.Context) error {
 	url, err := h.repository.Get(c.Param("id"))
 	if err != nil {

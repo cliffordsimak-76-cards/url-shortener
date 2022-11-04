@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// ToModels converts userID and URL to *model.URL.
 func ToModel(
 	userID string,
 	URL string,
@@ -18,11 +19,13 @@ func ToModel(
 	}
 }
 
+// BatchRequestModel is the request to Batch method.
 type BatchRequestModel struct {
 	CorrelationID string `json:"correlation_id"`
 	Original      string `json:"original_url"`
 }
 
+// ToModels converts []*BatchRequestModel to []*model.URL.
 func ToModels(
 	userID string,
 	batchRequestModels []*BatchRequestModel,

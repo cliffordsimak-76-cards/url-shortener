@@ -1,8 +1,10 @@
 package utils
 
 import (
-	"github.com/stretchr/testify/assert"
+	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStringToMD5(t *testing.T) {
@@ -19,4 +21,12 @@ func TestStringToMD5(t *testing.T) {
 		resp := StringToMD5(tCase.str)
 		assert.Equal(t, tCase.want, resp)
 	}
+}
+
+func ExampleStringToMD5() {
+	out := StringToMD5("https://yandex.ru")
+	fmt.Println(out)
+
+	// Output:
+	// e9db20b246fb7d3f
 }

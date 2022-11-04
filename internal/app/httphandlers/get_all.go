@@ -2,10 +2,11 @@ package httphandlers
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
 type URL struct {
@@ -13,6 +14,7 @@ type URL struct {
 	Original string `json:"original_url"`
 }
 
+// GetAll returns all URLs by user.
 func (h *HTTPHandler) GetAll(c echo.Context) error {
 	userID, err := extractUserID(c.Request())
 	if err != nil {

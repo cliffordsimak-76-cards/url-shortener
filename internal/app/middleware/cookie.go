@@ -7,10 +7,11 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 var ErrShortCookieValue = errors.New("error cookie value is too short")

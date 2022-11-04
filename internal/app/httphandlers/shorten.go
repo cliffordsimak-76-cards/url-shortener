@@ -3,11 +3,12 @@ package httphandlers
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers/adapters"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
 type ShortenRequest struct {
@@ -18,6 +19,7 @@ type ShortenResponse struct {
 	Result string `json:"result"`
 }
 
+// Shorten creates a shorl URL by URL.
 func (h *HTTPHandler) Shorten(c echo.Context) error {
 	var request *ShortenRequest
 	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
