@@ -18,6 +18,7 @@ type Config struct {
 	BaseURL         string `env:"BASE_URL" envDefault:"http://localhost:8080"`
 	FileStoragePath string `env:"FILE_STORAGE_PATH" envDefault:""`
 	DatabaseDSN     string `env:"DATABASE_DSN"`
+	PprofAddress    string `env:"PPROF_ADDRESS" envDefault:":6060"`
 }
 
 // NewConfig loads 'env' values from environment variables
@@ -49,7 +50,12 @@ func (cfg *Config) String() string {
 		"SERVER_ADDRESS: %s\n"+
 			"BASE_URL: %s\n"+
 			"FILE_STORAGE_PATH: %s\n"+
-			"DATABASE_DSN: %s\n",
-		cfg.ServerAddress, cfg.BaseURL, cfg.FileStoragePath, cfg.DatabaseDSN,
+			"DATABASE_DSN: %s\n"+
+			"PPROF_ADDRESS: %s\n",
+		cfg.ServerAddress,
+		cfg.BaseURL,
+		cfg.FileStoragePath,
+		cfg.DatabaseDSN,
+		cfg.PprofAddress,
 	)
 }

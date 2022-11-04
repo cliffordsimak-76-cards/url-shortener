@@ -49,7 +49,7 @@ func Run(cfg *config.Config) error {
 	e.Use(middleware.Compress)
 
 	go func() {
-		fmt.Println(http.ListenAndServe("localhost:6060", nil))
+		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
 	}()
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
