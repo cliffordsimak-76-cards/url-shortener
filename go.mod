@@ -12,9 +12,12 @@ require (
 	github.com/labstack/gommon v0.3.1
 	github.com/lib/pq v1.10.6
 	github.com/stretchr/testify v1.7.1
+	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114
+	honnef.co/go/tools v0.0.1-2019.2.3
 )
 
 require (
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
