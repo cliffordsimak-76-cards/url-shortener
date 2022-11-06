@@ -1,3 +1,6 @@
+Starting the server with flags set:
+go run -ldflags "-X main.buildVersion=v1.0.1 -X 'main.buildDate=$(date +'%Y/%m/%d')' -X 'main.buildCommit=$(git rev-parse HEAD)'" ./cmd/shortener/main.go
+
 # go-musthave-shortener-tpl
 Шаблон репозитория для практического трека «Go в веб-разработке».
 
