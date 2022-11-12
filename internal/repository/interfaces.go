@@ -18,6 +18,8 @@ type Repository interface {
 }
 
 var (
-	ErrNotFound      = errors.New("URL is not found")
+	// ErrNotFound.
+	ErrNotFound = errors.New("URL is not found")
+	// ErrAlreadyExists.
 	ErrAlreadyExists = errors.New("URL already exists")
 )

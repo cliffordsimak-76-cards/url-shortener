@@ -12,6 +12,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// CreateTableQuery.
 var CreateTableQuery = `
 	create table if not exists urls (
 	    correlation_id text unique,
@@ -27,6 +28,7 @@ type InDatabase struct {
 	db *sql.DB
 }
 
+// NewInDatabase.
 func NewInDatabase(db *sql.DB) Repository {
 	log.Info("start database repo")
 	return &InDatabase{
@@ -34,6 +36,7 @@ func NewInDatabase(db *sql.DB) Repository {
 	}
 }
 
+// Create.
 func (s *InDatabase) Create(
 	urlModel *model.URL,
 ) error {
@@ -73,6 +76,7 @@ func (s *InDatabase) Create(
 	return tx.Commit()
 }
 
+// CreateBatch.
 func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
 	ctx := context.Background()
 	tx, err := s.db.Begin()
@@ -112,6 +116,7 @@ func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
 	return tx.Commit()
 }
 
+// Get.
 func (s *InDatabase) Get(id string) (*model.URL, error) {
 	URL := &model.URL{}
 	err := s.db.QueryRow(
@@ -127,6 +132,7 @@ func (s *InDatabase) Get(id string) (*model.URL, error) {
 	return URL, nil
 }
 
+// GetAll.
 func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
 	rows, err := s.db.Query(
 		"select base_url, url_id from urls where user_id=$1",
@@ -151,6 +157,7 @@ func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
 	return urls, nil
 }
 
+// UpdateBatch.
 func (s *InDatabase) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
 	tx, err := s.db.Begin()
 	if err != nil {

@@ -17,6 +17,7 @@ type InMemory struct {
 	mutex     *sync.Mutex
 }
 
+// NewInMemory.
 func NewInMemory() Repository {
 	log.Info("start memory repo")
 	return &InMemory{
@@ -26,6 +27,7 @@ func NewInMemory() Repository {
 	}
 }
 
+// Create.
 func (s *InMemory) Create(
 	url *model.URL,
 ) error {
@@ -43,10 +45,12 @@ func (s *InMemory) Create(
 	return nil
 }
 
+// CreateBatch.
 func (s *InMemory) CreateBatch(urlModels []*model.URL) error {
 	panic("implement me")
 }
 
+// Get.
 func (s *InMemory) Get(id string) (*model.URL, error) {
 	s.mutex.Lock()
 	URL, ok := s.cache[id]
@@ -60,6 +64,7 @@ func (s *InMemory) Get(id string) (*model.URL, error) {
 	}, nil
 }
 
+// GetAll.
 func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
 	s.mutex.Lock()
 	urls, ok := s.userCache[userID]
@@ -70,6 +75,7 @@ func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
 	return urls, nil
 }
 
+// UpdateBatch.
 func (s *InMemory) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
 	panic("implement me")
 }

@@ -43,15 +43,15 @@ func (h *HTTPHandler) Shorten(c echo.Context) error {
 	if err != nil {
 		log.Errorf("error create in db: %s", err)
 		if errors.Is(err, repository.ErrAlreadyExists) {
-			return h.SendResponse(c, http.StatusConflict, urlID.Short)
+			return h.sendResponse(c, http.StatusConflict, urlID.Short)
 		}
 		return c.String(http.StatusInternalServerError, "error create in db")
 	}
 
-	return h.SendResponse(c, http.StatusCreated, urlModel.Short)
+	return h.sendResponse(c, http.StatusCreated, urlModel.Short)
 }
 
-func (h *HTTPHandler) SendResponse(c echo.Context, code int, str string) error {
+func (h *HTTPHandler) sendResponse(c echo.Context, code int, str string) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	return c.JSON(
 		code,

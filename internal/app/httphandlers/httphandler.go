@@ -16,6 +16,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// HTTPHandler.
 type HTTPHandler struct {
 	cfg        *config.Config
 	repository repository.Repository
@@ -23,6 +24,7 @@ type HTTPHandler struct {
 	deleteCh   chan workers.DeleteTask
 }
 
+// NewHTTPHandler.
 func NewHTTPHandler(
 	cfg *config.Config,
 	repository repository.Repository,

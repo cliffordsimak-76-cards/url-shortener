@@ -21,6 +21,7 @@ import (
 	"honnef.co/go/tools/staticcheck"
 )
 
+// config data.
 type ConfigData struct {
 	Staticchecks []string
 }
@@ -28,7 +29,6 @@ type ConfigData struct {
 //go:embed config.json
 var data []byte
 
-// main.
 func main() {
 	analyzers := []*analysis.Analyzer{
 		shadow.Analyzer,

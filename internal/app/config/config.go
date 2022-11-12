@@ -8,8 +8,11 @@ import (
 )
 
 const (
+	// UserCookieName.
 	UserCookieName string = "userID"
+	// UserIDLen.
 	UserIDLen      int    = 8
+	// SecretKey.
 	SecretKey      string = "secret key"
 )
 
