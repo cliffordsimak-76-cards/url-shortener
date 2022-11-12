@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,11 +32,19 @@ func ExampleStringToMD5() {
 	// e9db20b246fb7d3f
 }
 
-func BenchmarkDecode(b *testing.B) {
+func BenchmarkStringToMD5(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		url := "https://yandex.ru"
 		b.StartTimer()
 		StringToMD5(url)
+	}
+}
+
+func BenchmarkGenerateRandom(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		b.StartTimer()
+		GenerateRandom(rand.Intn(100))
 	}
 }
