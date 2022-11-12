@@ -452,7 +452,7 @@ jobs:
           github.head_ref == 'iter23' ||
           github.head_ref == 'iter24'
         run: |
-          shortenertest -test.v -test.run=^TestIteration15$ -source-path=.
+          shortenertest -test.v -test.run=^TestIteration14$ -source-path=.
 
       - name: "Code increment #16"
         if: |
