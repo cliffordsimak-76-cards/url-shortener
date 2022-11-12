@@ -22,6 +22,7 @@ var CreateTableQuery = `
 	);
 	`
 
+// slq db.
 type InDatabase struct {
 	db *sql.DB
 }

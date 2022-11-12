@@ -25,6 +25,7 @@ func New(
 	}
 }
 
+// run.
 func (w *DeleteWorker) Run(ctx context.Context) {
 	wg := sync.WaitGroup{}
 	for {

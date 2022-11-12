@@ -1,5 +1,6 @@
 package model
 
+// url model.
 type URL struct {
 	CorrelationID string
 	UserID        string

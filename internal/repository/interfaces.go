@@ -8,6 +8,7 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/model"
 )
 
+// repo interfaces.
 type Repository interface {
 	Create(urlModel *model.URL) error
 	CreateBatch(urlModels []*model.URL) error

@@ -28,6 +28,7 @@ type ConfigData struct {
 //go:embed config.json
 var data []byte
 
+// main.
 func main() {
 	analyzers := []*analysis.Analyzer{
 		shadow.Analyzer,

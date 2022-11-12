@@ -10,6 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// in memroy db.
 type InMemory struct {
 	cache     map[string]string
 	userCache map[string][]*model.URL

@@ -13,6 +13,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// inline db.
 type InFile struct {
 	cache     map[string]string
 	userCache map[string][]*model.URL

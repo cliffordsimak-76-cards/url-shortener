@@ -11,10 +11,12 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// request.
 type ShortenRequest struct {
 	URL string `json:"url"`
 }
 
+// response.
 type ShortenResponse struct {
 	Result string `json:"result"`
 }

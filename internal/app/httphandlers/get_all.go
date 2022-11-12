@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// url.
 type URL struct {
 	Short    string `json:"short_url"`
 	Original string `json:"original_url"`

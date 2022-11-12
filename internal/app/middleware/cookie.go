@@ -16,6 +16,7 @@ import (
 
 var ErrShortCookieValue = errors.New("error cookie value is too short")
 
+// cookie middleware.
 func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()

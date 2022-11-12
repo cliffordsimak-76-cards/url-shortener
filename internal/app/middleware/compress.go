@@ -22,6 +22,7 @@ func (w *gzipWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
+// compress middleware.
 func Compress(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if !strings.Contains(c.Request().Header.Get(echo.HeaderAcceptEncoding), gzipScheme) {

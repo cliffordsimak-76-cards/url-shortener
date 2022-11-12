@@ -16,6 +16,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// run.
 func Run(cfg *config.Config) error {
 	db, err := initDB(cfg)
 	if err != nil {
