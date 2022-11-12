@@ -30,3 +30,12 @@ func ExampleStringToMD5() {
 	// Output:
 	// e9db20b246fb7d3f
 }
+
+func BenchmarkDecode(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		url := "https://yandex.ru"
+		b.StartTimer()
+		StringToMD5(url)
+	}
+}
