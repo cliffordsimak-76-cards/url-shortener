@@ -13,7 +13,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// inline db.
+// Inline db.
 type InFile struct {
 	cache     map[string]string
 	userCache map[string][]*model.URL
@@ -21,6 +21,7 @@ type InFile struct {
 	mutex     *sync.Mutex
 }
 
+// NewInFile.
 func NewInFile(
 	filePath string,
 ) (Repository, error) {
@@ -49,6 +50,7 @@ func NewInFile(
 	}, nil
 }
 
+// Create.
 func (s *InFile) Create(
 	urlModel *model.URL,
 ) error {
@@ -72,10 +74,12 @@ func (s *InFile) Create(
 	return s.encoder.Encode(&data)
 }
 
+// CreateBatch.
 func (s *InFile) CreateBatch(urlModels []*model.URL) error {
 	panic("implement me")
 }
 
+// Get.
 func (s *InFile) Get(
 	id string,
 ) (*model.URL, error) {
@@ -91,6 +95,7 @@ func (s *InFile) Get(
 	}, nil
 }
 
+// GetAll.
 func (s *InFile) GetAll(
 	userID string,
 ) ([]*model.URL, error) {
@@ -103,6 +108,7 @@ func (s *InFile) GetAll(
 	return urls, nil
 }
 
+// UpdateBatch.
 func (s *InFile) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
 	panic("implement me")
 }
