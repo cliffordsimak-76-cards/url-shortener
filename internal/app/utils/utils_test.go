@@ -24,14 +24,6 @@ func TestStringToMD5(t *testing.T) {
 	}
 }
 
-func ExampleStringToMD5() {
-	out := StringToMD5("https://yandex.ru")
-	fmt.Println(out)
-
-	// Output:
-	// e9db20b246fb7d3f
-}
-
 func BenchmarkStringToMD5(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()

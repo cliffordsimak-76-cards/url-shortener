@@ -22,6 +22,7 @@ type Repository interface {
 	GetAll(userID string) ([]*model.URL, error)
 }
 
+// Errors.
 var (
 	// ErrNotFound.
 	ErrNotFound = errors.New("URL is not found")

@@ -7,6 +7,7 @@ import (
 	"github.com/caarlos0/env"
 )
 
+// Consts.
 const (
 	// UserCookieName.
 	UserCookieName string = "userID"
