@@ -18,11 +18,16 @@ const (
 
 // Config.
 type Config struct {
-	ServerAddress   string `env:"SERVER_ADDRESS" envDefault:":8080"`
-	BaseURL         string `env:"BASE_URL" envDefault:"http://localhost:8080"`
+	// ServerAddress.
+	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
+	// BaseURL.
+	BaseURL string `env:"BASE_URL" envDefault:"http://localhost:8080"`
+	// FileStoragePath.
 	FileStoragePath string `env:"FILE_STORAGE_PATH" envDefault:""`
-	DatabaseDSN     string `env:"DATABASE_DSN"`
-	PprofAddress    string `env:"PPROF_ADDRESS" envDefault:":6060"`
+	// DatabaseDSN.
+	DatabaseDSN string `env:"DATABASE_DSN"`
+	// PprofAddress.
+	PprofAddress string `env:"PPROF_ADDRESS" envDefault:":6060"`
 }
 
 // NewConfig loads 'env' values from environment variables
