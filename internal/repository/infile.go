@@ -52,6 +52,7 @@ func NewInFile(
 
 // Create.
 func (s *InFile) Create(
+	_ context.Context,
 	urlModel *model.URL,
 ) error {
 	if _, ok := s.cache[urlModel.Short]; ok {
@@ -75,12 +76,16 @@ func (s *InFile) Create(
 }
 
 // CreateBatch.
-func (s *InFile) CreateBatch(urlModels []*model.URL) error {
+func (s *InFile) CreateBatch(
+	_ context.Context,
+	urlModels []*model.URL,
+) error {
 	panic("implement me")
 }
 
 // Get.
 func (s *InFile) Get(
+	_ context.Context,
 	id string,
 ) (*model.URL, error) {
 	s.mutex.Lock()
@@ -97,6 +102,7 @@ func (s *InFile) Get(
 
 // GetAll.
 func (s *InFile) GetAll(
+	_ context.Context,
 	userID string,
 ) ([]*model.URL, error) {
 	s.mutex.Lock()
@@ -109,6 +115,9 @@ func (s *InFile) GetAll(
 }
 
 // UpdateBatch.
-func (s *InFile) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+func (s *InFile) UpdateBatch(
+	_ context.Context,
+	task workers.DeleteTask,
+) error {
 	panic("implement me")
 }

@@ -15,7 +15,6 @@ func TestGet(t *testing.T) {
 	te := newTestEnv(t)
 	type want struct {
 		code int
-		body *string
 	}
 	tests := []struct {
 		name  string
@@ -53,11 +52,13 @@ func TestGet(t *testing.T) {
 			ctx.SetParamNames("id")
 			ctx.SetParamValues(tt.value)
 
-			te.inMemoryRepo.Create(&model.URL{
-				UserID:   "226d0f8a5fa9180d",
-				Original: "https://www.yandex.ru",
-				Short:    "a506e095-b901-47db-8b8f-b23f9b1b9e1b",
-			})
+			te.inMemoryRepo.Create(
+				ctx.Request().Context(),
+				&model.URL{
+					UserID:   "226d0f8a5fa9180d",
+					Original: "https://www.yandex.ru",
+					Short:    "a506e095-b901-47db-8b8f-b23f9b1b9e1b",
+				})
 
 			h := te.httpHandler.Get
 			if assert.NoError(t, h(ctx)) {

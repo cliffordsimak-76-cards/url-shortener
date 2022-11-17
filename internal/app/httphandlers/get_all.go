@@ -17,12 +17,14 @@ type URL struct {
 
 // GetAll returns all URLs by user.
 func (h *HTTPHandler) GetAll(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	userID, err := extractUserID(c.Request())
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	urlModels, err := h.repository.GetAll(userID)
+	urlModels, err := h.repository.GetAll(ctx, userID)
 	if len(urlModels) == 0 || errors.Is(err, repository.ErrNotFound) {
 		return c.NoContent(http.StatusNoContent)
 	}

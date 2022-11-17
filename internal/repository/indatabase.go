@@ -38,9 +38,9 @@ func NewInDatabase(db *sql.DB) Repository {
 
 // Create.
 func (s *InDatabase) Create(
+	ctx context.Context,
 	urlModel *model.URL,
 ) error {
-	ctx := context.Background()
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
@@ -77,8 +77,10 @@ func (s *InDatabase) Create(
 }
 
 // CreateBatch.
-func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
-	ctx := context.Background()
+func (s *InDatabase) CreateBatch(
+	ctx context.Context,
+	urlModels []*model.URL,
+) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
@@ -117,9 +119,12 @@ func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
 }
 
 // Get.
-func (s *InDatabase) Get(id string) (*model.URL, error) {
+func (s *InDatabase) Get(
+	ctx context.Context,
+	id string,
+) (*model.URL, error) {
 	URL := &model.URL{}
-	err := s.db.QueryRow(
+	err := s.db.QueryRowContext(ctx,
 		"select base_url, url_id, deleted from urls where url_id=$1",
 		id,
 	).Scan(&URL.Original, &URL.Short, &URL.Deleted)
@@ -133,8 +138,11 @@ func (s *InDatabase) Get(id string) (*model.URL, error) {
 }
 
 // GetAll.
-func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
-	rows, err := s.db.Query(
+func (s *InDatabase) GetAll(
+	ctx context.Context,
+	userID string,
+) ([]*model.URL, error) {
+	rows, err := s.db.QueryContext(ctx,
 		"select base_url, url_id from urls where user_id=$1",
 		userID,
 	)
@@ -158,7 +166,10 @@ func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
 }
 
 // UpdateBatch.
-func (s *InDatabase) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+func (s *InDatabase) UpdateBatch(
+	ctx context.Context,
+	task workers.DeleteTask,
+) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err

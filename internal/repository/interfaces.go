@@ -11,15 +11,15 @@ import (
 // Repo interfaces.
 type Repository interface {
 	// Create.
-	Create(urlModel *model.URL) error
+	Create(context.Context, *model.URL) error
 	// CreateBatch.
-	CreateBatch(urlModels []*model.URL) error
+	CreateBatch(context.Context, []*model.URL) error
 	// UpdateBatch.
-	UpdateBatch(ctx context.Context, task workers.DeleteTask) error
+	UpdateBatch(context.Context, workers.DeleteTask) error
 	// Get.
-	Get(id string) (*model.URL, error)
+	Get(context.Context, string) (*model.URL, error)
 	// GetAll.
-	GetAll(userID string) ([]*model.URL, error)
+	GetAll(context.Context, string) ([]*model.URL, error)
 }
 
 // Errors.

@@ -19,6 +19,8 @@ type BatchResponseModel struct {
 
 // Batch creates a few short URLs by URLs.
 func (h *HTTPHandler) Batch(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	var request []*adapters.BatchRequestModel
 	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
@@ -35,7 +37,7 @@ func (h *HTTPHandler) Batch(c echo.Context) error {
 	}
 
 	urlModels := adapters.ToModels(userID, request)
-	createdModels, err := h.createBatch(urlModels)
+	createdModels, err := h.createBatch(ctx, urlModels)
 	if err != nil {
 		log.Error(err)
 		return c.String(http.StatusInternalServerError, err.Error())

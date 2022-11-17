@@ -1,6 +1,7 @@
 package httphandlers
 
 import (
+	"context"
 	"database/sql"
 	"encoding/hex"
 	"errors"
@@ -39,10 +40,13 @@ func NewHTTPHandler(
 	}
 }
 
-func (h *HTTPHandler) create(urlModel *model.URL) (*model.URL, error) {
-	err := h.repository.Create(urlModel)
+func (h *HTTPHandler) create(
+	ctx context.Context,
+	urlModel *model.URL,
+) (*model.URL, error) {
+	err := h.repository.Create(ctx, urlModel)
 	if errors.Is(err, repository.ErrAlreadyExists) {
-		urlModel, getErr := h.repository.Get(urlModel.Short)
+		urlModel, getErr := h.repository.Get(ctx, urlModel.Short)
 		if getErr != nil {
 			return nil, fmt.Errorf("error get in db")
 		}
@@ -54,8 +58,11 @@ func (h *HTTPHandler) create(urlModel *model.URL) (*model.URL, error) {
 	return urlModel, nil
 }
 
-func (h *HTTPHandler) createBatch(urlModels []*model.URL) ([]*model.URL, error) {
-	err := h.repository.CreateBatch(urlModels)
+func (h *HTTPHandler) createBatch(
+	ctx context.Context,
+	urlModels []*model.URL,
+) ([]*model.URL, error) {
+	err := h.repository.CreateBatch(ctx, urlModels)
 	if err != nil {
 		log.Error(err)
 		if errors.Is(err, repository.ErrAlreadyExists) {

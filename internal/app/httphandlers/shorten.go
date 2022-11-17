@@ -23,6 +23,8 @@ type ShortenResponse struct {
 
 // Shorten creates a shorl URL by URL.
 func (h *HTTPHandler) Shorten(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	var request *ShortenRequest
 	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
@@ -39,7 +41,7 @@ func (h *HTTPHandler) Shorten(c echo.Context) error {
 	}
 
 	urlModel := adapters.ToModel(userID, request.URL)
-	urlID, err := h.create(urlModel)
+	urlID, err := h.create(ctx, urlModel)
 	if err != nil {
 		log.Errorf("error create in db: %s", err)
 		if errors.Is(err, repository.ErrAlreadyExists) {

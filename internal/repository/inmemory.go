@@ -29,6 +29,7 @@ func NewInMemory() Repository {
 
 // Create.
 func (s *InMemory) Create(
+	_ context.Context,
 	url *model.URL,
 ) error {
 	if _, ok := s.cache[url.Short]; ok {
@@ -46,12 +47,18 @@ func (s *InMemory) Create(
 }
 
 // CreateBatch.
-func (s *InMemory) CreateBatch(urlModels []*model.URL) error {
+func (s *InMemory) CreateBatch(
+	_ context.Context,
+	urlModels []*model.URL,
+) error {
 	panic("implement me")
 }
 
 // Get.
-func (s *InMemory) Get(id string) (*model.URL, error) {
+func (s *InMemory) Get(
+	_ context.Context,
+	id string,
+) (*model.URL, error) {
 	s.mutex.Lock()
 	URL, ok := s.cache[id]
 	s.mutex.Unlock()
@@ -65,7 +72,10 @@ func (s *InMemory) Get(id string) (*model.URL, error) {
 }
 
 // GetAll.
-func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
+func (s *InMemory) GetAll(
+	_ context.Context,
+	userID string,
+) ([]*model.URL, error) {
 	s.mutex.Lock()
 	urls, ok := s.userCache[userID]
 	s.mutex.Unlock()
@@ -76,6 +86,9 @@ func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
 }
 
 // UpdateBatch.
-func (s *InMemory) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+func (s *InMemory) UpdateBatch(
+	_ context.Context,
+	task workers.DeleteTask,
+) error {
 	panic("implement me")
 }
