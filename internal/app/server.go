@@ -9,6 +9,7 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -55,7 +56,14 @@ func Run(cfg *config.Config) error {
 		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
 	}()
 
-	e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	if cfg.EnabledHTTPS {
+		if err = utils.CheckCerts(); err != nil {
+			log.Fatal(err)
+		}
+		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
+	} else {
+		e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	}
 
 	return nil
 }

@@ -29,6 +29,8 @@ type Config struct {
 	DatabaseDSN string `env:"DATABASE_DSN"`
 	// PprofAddress.
 	PprofAddress string `env:"PPROF_ADDRESS" envDefault:":6060"`
+	// HTTPS в веб-сервере.
+	EnabledHTTPS bool `env:"ENABLE_HTTPS"`
 }
 
 // NewConfig loads 'env' values from environment variables
@@ -51,6 +53,7 @@ func parseFlags(cfg *Config) {
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "base URL for short link")
 	flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "file storage path")
 	flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "database address")
+	flag.BoolVar(&cfg.EnabledHTTPS, "s", cfg.EnabledHTTPS, "enable https")
 	flag.Parse()
 }
 
