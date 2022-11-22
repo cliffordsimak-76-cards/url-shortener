@@ -11,7 +11,9 @@ import (
 
 // Get returns URL by ID.
 func (h *HTTPHandler) Get(c echo.Context) error {
-	url, err := h.repository.Get(c.Param("id"))
+	ctx := c.Request().Context()
+
+	url, err := h.repository.Get(ctx, c.Param("id"))
 	if err != nil {
 		log.Errorf("error get: %s", err)
 		if errors.Is(err, repository.ErrNotFound) {

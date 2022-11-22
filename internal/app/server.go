@@ -16,7 +16,11 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// run.
 func Run(cfg *config.Config) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	db, err := initDB(cfg)
 	if err != nil {
 		log.Fatal(err)
@@ -29,7 +33,6 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
-	ctx := context.Background()
 	deleteTasks := make(chan workers.DeleteTask, 5)
 	delService := workers.New(repo, deleteTasks)
 	go delService.Run(ctx)

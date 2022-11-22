@@ -10,12 +10,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// in memroy db.
 type InMemory struct {
 	cache     map[string]string
 	userCache map[string][]*model.URL
 	mutex     *sync.Mutex
 }
 
+// NewInMemory.
 func NewInMemory() Repository {
 	log.Info("start memory repo")
 	return &InMemory{
@@ -25,7 +27,9 @@ func NewInMemory() Repository {
 	}
 }
 
+// Create.
 func (s *InMemory) Create(
+	_ context.Context,
 	url *model.URL,
 ) error {
 	if _, ok := s.cache[url.Short]; ok {
@@ -42,11 +46,19 @@ func (s *InMemory) Create(
 	return nil
 }
 
-func (s *InMemory) CreateBatch(urlModels []*model.URL) error {
+// CreateBatch.
+func (s *InMemory) CreateBatch(
+	_ context.Context,
+	urlModels []*model.URL,
+) error {
 	panic("implement me")
 }
 
-func (s *InMemory) Get(id string) (*model.URL, error) {
+// Get.
+func (s *InMemory) Get(
+	_ context.Context,
+	id string,
+) (*model.URL, error) {
 	s.mutex.Lock()
 	URL, ok := s.cache[id]
 	s.mutex.Unlock()
@@ -59,7 +71,11 @@ func (s *InMemory) Get(id string) (*model.URL, error) {
 	}, nil
 }
 
-func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
+// GetAll.
+func (s *InMemory) GetAll(
+	_ context.Context,
+	userID string,
+) ([]*model.URL, error) {
 	s.mutex.Lock()
 	urls, ok := s.userCache[userID]
 	s.mutex.Unlock()
@@ -69,6 +85,10 @@ func (s *InMemory) GetAll(userID string) ([]*model.URL, error) {
 	return urls, nil
 }
 
-func (s *InMemory) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+// UpdateBatch.
+func (s *InMemory) UpdateBatch(
+	_ context.Context,
+	task workers.DeleteTask,
+) error {
 	panic("implement me")
 }

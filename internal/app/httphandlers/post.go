@@ -13,6 +13,8 @@ import (
 
 // Post creates a shorl URL by URL.
 func (h *HTTPHandler) Post(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
@@ -30,7 +32,7 @@ func (h *HTTPHandler) Post(c echo.Context) error {
 	}
 
 	urlModel := adapters.ToModel(userID, URL)
-	urlModel, err = h.create(urlModel)
+	urlModel, err = h.create(ctx, urlModel)
 	if err != nil {
 		log.Errorf("error post: %s", err)
 		if errors.Is(err, repository.ErrAlreadyExists) {

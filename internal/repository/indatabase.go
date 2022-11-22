@@ -12,6 +12,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// CreateTableQuery.
 var CreateTableQuery = `
 	create table if not exists urls (
 	    correlation_id text unique,
@@ -22,10 +23,12 @@ var CreateTableQuery = `
 	);
 	`
 
+// slq db.
 type InDatabase struct {
 	db *sql.DB
 }
 
+// NewInDatabase.
 func NewInDatabase(db *sql.DB) Repository {
 	log.Info("start database repo")
 	return &InDatabase{
@@ -33,10 +36,11 @@ func NewInDatabase(db *sql.DB) Repository {
 	}
 }
 
+// Create.
 func (s *InDatabase) Create(
+	ctx context.Context,
 	urlModel *model.URL,
 ) error {
-	ctx := context.Background()
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
@@ -72,8 +76,11 @@ func (s *InDatabase) Create(
 	return tx.Commit()
 }
 
-func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
-	ctx := context.Background()
+// CreateBatch.
+func (s *InDatabase) CreateBatch(
+	ctx context.Context,
+	urlModels []*model.URL,
+) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
@@ -111,9 +118,13 @@ func (s *InDatabase) CreateBatch(urlModels []*model.URL) error {
 	return tx.Commit()
 }
 
-func (s *InDatabase) Get(id string) (*model.URL, error) {
+// Get.
+func (s *InDatabase) Get(
+	ctx context.Context,
+	id string,
+) (*model.URL, error) {
 	URL := &model.URL{}
-	err := s.db.QueryRow(
+	err := s.db.QueryRowContext(ctx,
 		"select base_url, url_id, deleted from urls where url_id=$1",
 		id,
 	).Scan(&URL.Original, &URL.Short, &URL.Deleted)
@@ -126,8 +137,12 @@ func (s *InDatabase) Get(id string) (*model.URL, error) {
 	return URL, nil
 }
 
-func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
-	rows, err := s.db.Query(
+// GetAll.
+func (s *InDatabase) GetAll(
+	ctx context.Context,
+	userID string,
+) ([]*model.URL, error) {
+	rows, err := s.db.QueryContext(ctx,
 		"select base_url, url_id from urls where user_id=$1",
 		userID,
 	)
@@ -150,7 +165,11 @@ func (s *InDatabase) GetAll(userID string) ([]*model.URL, error) {
 	return urls, nil
 }
 
-func (s *InDatabase) UpdateBatch(ctx context.Context, task workers.DeleteTask) error {
+// UpdateBatch.
+func (s *InDatabase) UpdateBatch(
+	ctx context.Context,
+	task workers.DeleteTask,
+) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err

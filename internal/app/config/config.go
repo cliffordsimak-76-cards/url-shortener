@@ -7,18 +7,28 @@ import (
 	"github.com/caarlos0/env"
 )
 
+// Consts.
 const (
+	// UserCookieName.
 	UserCookieName string = "userID"
-	UserIDLen      int    = 8
-	SecretKey      string = "secret key"
+	// UserIDLen.
+	UserIDLen int = 8
+	// SecretKey.
+	SecretKey string = "secret key"
 )
 
+// Config.
 type Config struct {
-	ServerAddress   string `env:"SERVER_ADDRESS" envDefault:":8080"`
-	BaseURL         string `env:"BASE_URL" envDefault:"http://localhost:8080"`
+	// ServerAddress.
+	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
+	// BaseURL.
+	BaseURL string `env:"BASE_URL" envDefault:"http://localhost:8080"`
+	// FileStoragePath.
 	FileStoragePath string `env:"FILE_STORAGE_PATH" envDefault:""`
-	DatabaseDSN     string `env:"DATABASE_DSN"`
-	PprofAddress    string `env:"PPROF_ADDRESS" envDefault:":6060"`
+	// DatabaseDSN.
+	DatabaseDSN string `env:"DATABASE_DSN"`
+	// PprofAddress.
+	PprofAddress string `env:"PPROF_ADDRESS" envDefault:":6060"`
 }
 
 // NewConfig loads 'env' values from environment variables

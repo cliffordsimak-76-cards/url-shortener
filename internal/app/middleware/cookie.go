@@ -14,8 +14,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var ErrShortCookieValue = errors.New("error cookie value is too short")
+var errShortCookieValue = errors.New("error cookie value is too short")
 
+// cookie middleware.
 func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
@@ -23,7 +24,7 @@ func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 		if cookie != nil {
 			err := validateCookie(cookie.Value)
 			if err != nil {
-				if errors.Is(err, ErrShortCookieValue) {
+				if errors.Is(err, errShortCookieValue) {
 					return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 				}
 			}
@@ -43,7 +44,7 @@ func Cookie(next echo.HandlerFunc) echo.HandlerFunc {
 func validateCookie(cookieValue string) error {
 	data, err := hex.DecodeString(cookieValue)
 	if len(data) == 0 {
-		return ErrShortCookieValue
+		return errShortCookieValue
 	}
 	if err != nil {
 		return fmt.Errorf("cant decode cookie value")

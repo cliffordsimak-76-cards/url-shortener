@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// response.
 type BatchResponseModel struct {
 	CorrelationID string `json:"correlation_id"`
 	Short         string `json:"short_url"`
@@ -18,6 +19,8 @@ type BatchResponseModel struct {
 
 // Batch creates a few short URLs by URLs.
 func (h *HTTPHandler) Batch(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	var request []*adapters.BatchRequestModel
 	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
@@ -34,14 +37,14 @@ func (h *HTTPHandler) Batch(c echo.Context) error {
 	}
 
 	urlModels := adapters.ToModels(userID, request)
-	createdModels, err := h.createBatch(urlModels)
+	createdModels, err := h.createBatch(ctx, urlModels)
 	if err != nil {
 		log.Error(err)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	return c.JSON(http.StatusCreated, h.ToBatchResponse(createdModels))
+	return c.JSON(http.StatusCreated, h.toBatchResponse(createdModels))
 }
 
 func validateURLBatch(request []*adapters.BatchRequestModel) error {
@@ -54,7 +57,7 @@ func validateURLBatch(request []*adapters.BatchRequestModel) error {
 	return nil
 }
 
-func (h *HTTPHandler) ToBatchResponse(urlModels []*model.URL) []*BatchResponseModel {
+func (h *HTTPHandler) toBatchResponse(urlModels []*model.URL) []*BatchResponseModel {
 	var result []*BatchResponseModel
 	for _, urlModel := range urlModels {
 		result = append(result, &BatchResponseModel{
