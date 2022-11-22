@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+// Consts.
 const (
 	// Cert file.
 	CertFile = "ssl/cert.pem"
