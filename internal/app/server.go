@@ -62,15 +62,6 @@ func Run(cfg *config.Config) error {
 		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
 	}()
 
-	if cfg.EnabledHTTPS {
-		if err = utils.CheckCerts(); err != nil {
-			log.Fatal(err)
-		}
-		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
-	} else {
-		e.Logger.Fatal(e.Start(cfg.ServerAddress))
-	}
-
 	go func() {
 		<-signalChan
 
@@ -87,6 +78,15 @@ func Run(cfg *config.Config) error {
 
 		close(deleteTasks)
 	}()
+
+	if cfg.EnabledHTTPS {
+		if err = utils.CheckCerts(); err != nil {
+			log.Fatal(err)
+		}
+		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
+	} else {
+		e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	}
 
 	return nil
 }
