@@ -73,7 +73,7 @@ func parseFlags(cfg *Config) {
 }
 
 // ParseConfigFile parsed config.json file and merger with this config.
-func (c *Config) ParseConfigFile(name string) error {
+func (cfg *Config) ParseConfigFile(name string) error {
 	file, err := os.Open(name)
 	if err != nil {
 		return err
@@ -92,23 +92,23 @@ func (c *Config) ParseConfigFile(name string) error {
 
 	fmt.Printf("config: %#v\n", configJSON)
 
-	if c.DatabaseDSN == "" && configJSON.DatabaseDSN != "" {
-		c.DatabaseDSN = configJSON.DatabaseDSN
+	if cfg.DatabaseDSN == "" && configJSON.DatabaseDSN != "" {
+		cfg.DatabaseDSN = configJSON.DatabaseDSN
 	}
-	if c.ServerAddress == "" && configJSON.ServerAddress != "" {
-		c.ServerAddress = configJSON.ServerAddress
+	if cfg.ServerAddress == "" && configJSON.ServerAddress != "" {
+		cfg.ServerAddress = configJSON.ServerAddress
 	}
-	if c.FileStoragePath == "" && configJSON.FileStoragePath != "" {
-		c.FileStoragePath = configJSON.FileStoragePath
+	if cfg.FileStoragePath == "" && configJSON.FileStoragePath != "" {
+		cfg.FileStoragePath = configJSON.FileStoragePath
 	}
-	if !c.EnabledHTTPS && configJSON.EnabledHTTPS {
-		c.EnabledHTTPS = true
+	if !cfg.EnabledHTTPS && configJSON.EnabledHTTPS {
+		cfg.EnabledHTTPS = true
 	}
-	if c.ServerAddress == "" && configJSON.ServerAddress != "" {
-		c.ServerAddress = configJSON.ServerAddress
+	if cfg.ServerAddress == "" && configJSON.ServerAddress != "" {
+		cfg.ServerAddress = configJSON.ServerAddress
 	}
-	if c.BaseURL == "" && configJSON.BaseURL != "" {
-		c.BaseURL = configJSON.BaseURL
+	if cfg.BaseURL == "" && configJSON.BaseURL != "" {
+		cfg.BaseURL = configJSON.BaseURL
 	}
 
 	return nil
