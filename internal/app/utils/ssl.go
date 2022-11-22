@@ -14,10 +14,13 @@ import (
 )
 
 const (
+	// Cert file.
 	CertFile = "ssl/cert.pem"
-	KeyFile  = "ssl/key.pem"
+	// Cert key.
+	KeyFile = "ssl/key.pem"
 )
 
+// Cgeck cert.
 func CheckCerts() error {
 	_, errC := os.Stat(CertFile)
 	_, errK := os.Stat(KeyFile)
@@ -28,6 +31,7 @@ func CheckCerts() error {
 	return CreateCert()
 }
 
+// Create cert.
 func CreateCert() error {
 	// создаём шаблон сертификата
 	cert := &x509.Certificate{
