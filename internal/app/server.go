@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -86,6 +87,17 @@ func Run(cfg *config.Config) error {
 		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
 	} else {
 		e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	}
+
+	if cfg.TrustedSubnet != "" {
+		_, trustedNet, err := net.ParseCIDR(cfg.TrustedSubnet)
+		if err != nil {
+			log.Fatal(err)
+			return err
+		}
+
+		e.POST("/api/internal/stats", httpHandler.GetStats)
+		e.Use(middleware.IPFilter(trustedNet))
 	}
 
 	return nil
