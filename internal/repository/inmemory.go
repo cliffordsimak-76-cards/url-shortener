@@ -95,8 +95,8 @@ func (s *InMemory) UpdateBatch(
 
 // Stats
 type Stats struct {
-	LinksCount int
-	UsersCount int
+	LinksCount int `json:"urls"`
+	UsersCount int `json:"users"`
 }
 
 // Get stats.
