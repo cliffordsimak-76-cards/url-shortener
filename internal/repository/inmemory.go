@@ -93,12 +93,13 @@ func (s *InMemory) UpdateBatch(
 	panic("implement me")
 }
 
+// Stats
 type Stats struct {
 	LinksCount int
 	UsersCount int
 }
 
-// Stats.
+// Get stats.
 func (s *InMemory) GetStats(
 	ctx context.Context,
 ) (*Stats, error) {
