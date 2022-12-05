@@ -31,7 +31,7 @@ type Config struct {
 	// DatabaseDSN.
 	DatabaseDSN string `json:"database_dsn,omitempty" env:"DATABASE_DSN"`
 	// PprofAddress.
-	PprofAddress string `env:"PPROF_ADDRESS" envDefault:":6060"`
+	PprofAddress string `json:"pprof_address,omitempty" env:"PPROF_ADDRESS" envDefault:":6060"`
 	// Строковое представление бесклассовой адресации (CIDR).
 	TrustedSubnet string `json:"trusted_subnet,omitempty" env:"TRUSTED_SUBNET"`
 	// HTTPS в веб-сервере.
