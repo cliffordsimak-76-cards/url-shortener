@@ -97,7 +97,7 @@ func Run(cfg *config.Config) error {
 		}
 
 		e.POST("/api/internal/stats", httpHandler.GetStats)
-		e.Use(middleware.IpFilter(trustedNet))
+		e.Use(middleware.IPFilter(trustedNet))
 	}
 
 	return nil
