@@ -92,3 +92,20 @@ func (s *InMemory) UpdateBatch(
 ) error {
 	panic("implement me")
 }
+
+type Stats struct {
+	LinksCount int
+	UsersCount int
+}
+
+// Stats.
+func (s *InMemory) GetStats(
+	ctx context.Context,
+) (*Stats, error) {
+	stats := &Stats{}
+	s.mutex.Lock()
+	stats.UsersCount = len(s.userCache)
+	stats.LinksCount = len(s.cache)
+	s.mutex.Unlock()
+	return stats, nil
+}

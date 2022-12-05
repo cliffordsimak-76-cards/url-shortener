@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net"
 	"net/http"
 
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
@@ -56,6 +57,17 @@ func Run(cfg *config.Config) error {
 	}()
 
 	e.Logger.Fatal(e.Start(cfg.ServerAddress))
+
+	if cfg.TrustedSubnet != "" {
+		_, trustedNet, err := net.ParseCIDR(cfg.TrustedSubnet)
+		if err != nil {
+			log.Fatal(err)
+			return err
+		}
+
+		e.POST("/api/internal/stats", httpHandler.GetStats)
+		e.Use(middleware.IpFilter(trustedNet))
+	}
 
 	return nil
 }

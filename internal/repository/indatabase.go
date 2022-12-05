@@ -195,3 +195,21 @@ func (s *InDatabase) UpdateBatch(
 
 	return tx.Commit()
 }
+
+// Stats.
+func (s *InDatabase) GetStats(
+	ctx context.Context,
+) (*Stats, error) {
+	stats := &Stats{}
+
+	err := s.db.QueryRowContext(ctx, "SELECT COUNT(1), COUNT(DISTINCT user_id) FROM urls").
+		Scan(stats.LinksCount, stats.UsersCount)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return stats, nil
+}

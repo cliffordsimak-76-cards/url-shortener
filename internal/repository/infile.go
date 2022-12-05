@@ -121,3 +121,15 @@ func (s *InFile) UpdateBatch(
 ) error {
 	panic("implement me")
 }
+
+// Stats.
+func (s *InFile) GetStats(
+	ctx context.Context,
+) (*Stats, error) {
+	stats := &Stats{}
+	s.mutex.Lock()
+	stats.UsersCount = len(s.userCache)
+	stats.LinksCount = len(s.cache)
+	s.mutex.Unlock()
+	return stats, nil
+}
