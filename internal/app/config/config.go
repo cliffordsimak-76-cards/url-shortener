@@ -1,8 +1,11 @@
 package config
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/caarlos0/env"
 )
@@ -20,15 +23,19 @@ const (
 // Config.
 type Config struct {
 	// ServerAddress.
-	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
+	ServerAddress string `json:"server_address,omitempty" env:"SERVER_ADDRESS" envDefault:":8080"`
 	// BaseURL.
-	BaseURL string `env:"BASE_URL" envDefault:"http://localhost:8080"`
+	BaseURL string `json:"base_url,omitempty" env:"BASE_URL" envDefault:"http://localhost:8080"`
 	// FileStoragePath.
-	FileStoragePath string `env:"FILE_STORAGE_PATH" envDefault:""`
+	FileStoragePath string `json:"file_storage_path,omitempty" env:"FILE_STORAGE_PATH" envDefault:""`
 	// DatabaseDSN.
-	DatabaseDSN string `env:"DATABASE_DSN"`
+	DatabaseDSN string `json:"database_dsn,omitempty" env:"DATABASE_DSN"`
 	// PprofAddress.
-	PprofAddress string `env:"PPROF_ADDRESS" envDefault:":6060"`
+	PprofAddress string `json:"pprof_address,omitempty" env:"PPROF_ADDRESS" envDefault:":6060"`
+	// HTTPS в веб-сервере.
+	EnabledHTTPS bool `json:"enable_https,omitempty" env:"ENABLE_HTTPS"`
+	// Конфиг файл.
+	ConfigFilename string `env:"CONFIG" envDefault:""`
 }
 
 // NewConfig loads 'env' values from environment variables
@@ -41,6 +48,16 @@ func NewConfig() (*Config, error) {
 
 	parseFlags(cfg)
 
+	if cfg.ConfigFilename == "" {
+		fmt.Println(cfg)
+		return cfg, nil
+	}
+
+	err := cfg.ParseConfigFile(cfg.ConfigFilename)
+	if err != nil {
+		return nil, err
+	}
+
 	fmt.Println(cfg)
 	return cfg, nil
 }
@@ -51,7 +68,50 @@ func parseFlags(cfg *Config) {
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "base URL for short link")
 	flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "file storage path")
 	flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "database address")
+	flag.BoolVar(&cfg.EnabledHTTPS, "s", cfg.EnabledHTTPS, "enable https")
 	flag.Parse()
+}
+
+// ParseConfigFile parsed config.json file and merger with this config.
+func (cfg *Config) ParseConfigFile(name string) error {
+	file, err := os.Open(name)
+	if err != nil {
+		return err
+	}
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	var configJSON Config
+	err = json.Unmarshal(data, &configJSON)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("config: %#v\n", configJSON)
+
+	if cfg.DatabaseDSN == "" && configJSON.DatabaseDSN != "" {
+		cfg.DatabaseDSN = configJSON.DatabaseDSN
+	}
+	if cfg.ServerAddress == "" && configJSON.ServerAddress != "" {
+		cfg.ServerAddress = configJSON.ServerAddress
+	}
+	if cfg.FileStoragePath == "" && configJSON.FileStoragePath != "" {
+		cfg.FileStoragePath = configJSON.FileStoragePath
+	}
+	if !cfg.EnabledHTTPS && configJSON.EnabledHTTPS {
+		cfg.EnabledHTTPS = true
+	}
+	if cfg.ServerAddress == "" && configJSON.ServerAddress != "" {
+		cfg.ServerAddress = configJSON.ServerAddress
+	}
+	if cfg.BaseURL == "" && configJSON.BaseURL != "" {
+		cfg.BaseURL = configJSON.BaseURL
+	}
+
+	return nil
 }
 
 // String returns Config values.

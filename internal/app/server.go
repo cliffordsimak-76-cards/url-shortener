@@ -5,10 +5,14 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -20,6 +24,9 @@ import (
 func Run(cfg *config.Config) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	db, err := initDB(cfg)
 	if err != nil {
@@ -55,7 +62,31 @@ func Run(cfg *config.Config) error {
 		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
 	}()
 
-	e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	go func() {
+		<-signalChan
+
+		log.Print("Shutting down...")
+
+		cancel()
+		if err = e.Shutdown(ctx); err != nil && err != ctx.Err() {
+			e.Logger.Fatal(err)
+		}
+
+		if err = db.Close(); err != nil {
+			log.Fatal(err)
+		}
+
+		close(deleteTasks)
+	}()
+
+	if cfg.EnabledHTTPS {
+		if err = utils.CheckCerts(); err != nil {
+			log.Fatal(err)
+		}
+		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
+	} else {
+		e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	}
 
 	return nil
 }
