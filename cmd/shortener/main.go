@@ -14,7 +14,6 @@ var (
 	buildCommit  = "N/A"
 )
 
-// main.
 func main() {
 	printBuildData()
 

@@ -66,7 +66,7 @@ func Run(cfg *config.Config) error {
 		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
 	}()
 
-	go startGrpcServer(repo)
+	//go startGrpcServer(repo)
 
 	if cfg.EnabledHTTPS {
 		if err = utils.CheckCerts(); err != nil {
