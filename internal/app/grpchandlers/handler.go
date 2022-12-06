@@ -5,11 +5,13 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 )
 
+// GrpcServer.
 type GrpcServer struct {
 	pb.UnimplementedShortenerServer
 	repository repository.Repository
 }
 
+// NewGrpcServer.
 func NewGrpcServer(
 	repository repository.Repository,
 ) *GrpcServer {

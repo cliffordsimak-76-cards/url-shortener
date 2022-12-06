@@ -9,6 +9,7 @@ import (
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 )
 
+// Get.
 func (s *GrpcServer) Get(
 	ctx context.Context,
 	in *pb.GetRequest,
