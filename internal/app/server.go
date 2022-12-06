@@ -66,17 +66,6 @@ func Run(cfg *config.Config) error {
 		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
 	}()
 
-	//go startGrpcServer(repo)
-
-	if cfg.EnabledHTTPS {
-		if err = utils.CheckCerts(); err != nil {
-			log.Fatal(err)
-		}
-		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
-	} else {
-		e.Logger.Fatal(e.Start(cfg.ServerAddress))
-	}
-
 	if cfg.TrustedSubnet != "" {
 		_, trustedNet, err := net.ParseCIDR(cfg.TrustedSubnet)
 		if err != nil {
@@ -87,6 +76,17 @@ func Run(cfg *config.Config) error {
 		e.POST("/api/internal/stats", httpHandler.GetStats)
 		e.Use(middleware.IPFilter(trustedNet))
 	}
+
+	if cfg.EnabledHTTPS {
+		if err = utils.CheckCerts(); err != nil {
+			log.Fatal(err)
+		}
+		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
+	} else {
+		e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	}
+
+	go startGrpcServer(repo)
 
 	go func() {
 		<-signalChan
