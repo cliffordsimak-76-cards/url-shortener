@@ -62,10 +62,6 @@ func Run(cfg *config.Config) error {
 	e.Use(middleware.Decompress)
 	e.Use(middleware.Compress)
 
-	go func() {
-		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
-	}()
-
 	if cfg.TrustedSubnet != "" {
 		_, trustedNet, err := net.ParseCIDR(cfg.TrustedSubnet)
 		if err != nil {
@@ -77,16 +73,25 @@ func Run(cfg *config.Config) error {
 		e.Use(middleware.IPFilter(trustedNet))
 	}
 
-	if cfg.EnabledHTTPS {
-		if err = utils.CheckCerts(); err != nil {
+	go func() {
+		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
+	}()
+
+	go func() {
+		listen, err := net.Listen("tcp", ":3200")
+		if err != nil {
+			log.Fatalf("GRPC server net.Listen: %v", err)
+		}
+
+		s := grpc.NewServer()
+		pb.RegisterShortenerServer(s, grpchandlers.NewGrpcServer(repo))
+
+		log.Printf("GRPC server started on %v", "3200")
+
+		if err := s.Serve(listen); err != nil {
 			log.Fatal(err)
 		}
-		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
-	} else {
-		e.Logger.Fatal(e.Start(cfg.ServerAddress))
-	}
-
-	go startGrpcServer(repo)
+	}()
 
 	go func() {
 		<-signalChan
@@ -104,6 +109,15 @@ func Run(cfg *config.Config) error {
 
 		close(deleteTasks)
 	}()
+
+	if cfg.EnabledHTTPS {
+		if err = utils.CheckCerts(); err != nil {
+			log.Fatal(err)
+		}
+		log.Fatal(e.StartTLS(cfg.ServerAddress, utils.CertFile, utils.KeyFile))
+	} else {
+		e.Logger.Fatal(e.Start(cfg.ServerAddress))
+	}
 
 	return nil
 }
@@ -135,20 +149,4 @@ func initRepo(
 		return repository.NewInFile(cfg.FileStoragePath)
 	}
 	return repository.NewInMemory(), nil
-}
-
-func startGrpcServer(repo repository.Repository) {
-	listen, err := net.Listen("tcp", "3200")
-	if err != nil {
-		log.Fatalf("GRPC server net.Listen: %v", err)
-	}
-
-	s := grpc.NewServer()
-	pb.RegisterShortenerServer(s, grpchandlers.NewGrpcServer(repo))
-
-	log.Printf("GRPC server started on %v", "3200")
-
-	if err := s.Serve(listen); err != nil {
-		log.Fatal(err)
-	}
 }
