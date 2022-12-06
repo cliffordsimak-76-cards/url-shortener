@@ -11,14 +11,17 @@ import (
 	"syscall"
 
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/config"
+	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/grpchandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/httphandlers"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/middleware"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/utils"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/app/workers"
+	pb "github.com/cliffordsimak-76-cards/url-shortener/internal/proto"
 	"github.com/cliffordsimak-76-cards/url-shortener/internal/repository"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"google.golang.org/grpc"
 )
 
 // run.
@@ -80,6 +83,8 @@ func Run(cfg *config.Config) error {
 		close(deleteTasks)
 	}()
 
+	startGrpcServer(repo)
+
 	if cfg.EnabledHTTPS {
 		if err = utils.CheckCerts(); err != nil {
 			log.Fatal(err)
@@ -130,4 +135,22 @@ func initRepo(
 		return repository.NewInFile(cfg.FileStoragePath)
 	}
 	return repository.NewInMemory(), nil
+}
+
+func startGrpcServer(repo repository.Repository) {
+	go func() {
+		listen, err := net.Listen("tcp", "3200")
+		if err != nil {
+			log.Fatalf("GRPC server net.Listen: %v", err)
+		}
+
+		s := grpc.NewServer()
+		pb.RegisterShortenerServer(s, grpchandlers.NewGrpcServer(repo))
+
+		log.Printf("GRPC server started on %v", "3200")
+
+		if err := s.Serve(listen); err != nil {
+			log.Fatal(err)
+		}
+	}()
 }
