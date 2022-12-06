@@ -66,24 +66,7 @@ func Run(cfg *config.Config) error {
 		fmt.Println(http.ListenAndServe(cfg.PprofAddress, nil))
 	}()
 
-	go func() {
-		<-signalChan
-
-		log.Print("Shutting down...")
-
-		cancel()
-		if err = e.Shutdown(ctx); err != nil && err != ctx.Err() {
-			e.Logger.Fatal(err)
-		}
-
-		if err = db.Close(); err != nil {
-			log.Fatal(err)
-		}
-
-		close(deleteTasks)
-	}()
-
-	startGrpcServer(repo)
+	go startGrpcServer(repo)
 
 	if cfg.EnabledHTTPS {
 		if err = utils.CheckCerts(); err != nil {
@@ -104,6 +87,23 @@ func Run(cfg *config.Config) error {
 		e.POST("/api/internal/stats", httpHandler.GetStats)
 		e.Use(middleware.IPFilter(trustedNet))
 	}
+
+	go func() {
+		<-signalChan
+
+		log.Print("Shutting down...")
+
+		cancel()
+		if err = e.Shutdown(ctx); err != nil && err != ctx.Err() {
+			e.Logger.Fatal(err)
+		}
+
+		if err = db.Close(); err != nil {
+			log.Fatal(err)
+		}
+
+		close(deleteTasks)
+	}()
 
 	return nil
 }
@@ -138,19 +138,17 @@ func initRepo(
 }
 
 func startGrpcServer(repo repository.Repository) {
-	go func() {
-		listen, err := net.Listen("tcp", "3200")
-		if err != nil {
-			log.Fatalf("GRPC server net.Listen: %v", err)
-		}
+	listen, err := net.Listen("tcp", "3200")
+	if err != nil {
+		log.Fatalf("GRPC server net.Listen: %v", err)
+	}
 
-		s := grpc.NewServer()
-		pb.RegisterShortenerServer(s, grpchandlers.NewGrpcServer(repo))
+	s := grpc.NewServer()
+	pb.RegisterShortenerServer(s, grpchandlers.NewGrpcServer(repo))
 
-		log.Printf("GRPC server started on %v", "3200")
+	log.Printf("GRPC server started on %v", "3200")
 
-		if err := s.Serve(listen); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	if err := s.Serve(listen); err != nil {
+		log.Fatal(err)
+	}
 }
