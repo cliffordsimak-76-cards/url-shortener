@@ -29,10 +29,12 @@ type shortenerClient struct {
 	cc grpc.ClientConnInterface
 }
 
+// Foo.
 func NewShortenerClient(cc grpc.ClientConnInterface) ShortenerClient {
 	return &shortenerClient{cc}
 }
 
+// Foo.
 func (c *shortenerClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
 	err := c.cc.Invoke(ctx, "/shortener.Shortener/Get", in, out, opts...)
@@ -54,6 +56,7 @@ type ShortenerServer interface {
 type UnimplementedShortenerServer struct {
 }
 
+// Foo.
 func (UnimplementedShortenerServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
@@ -66,10 +69,12 @@ type UnsafeShortenerServer interface {
 	mustEmbedUnimplementedShortenerServer()
 }
 
+// Foo.
 func RegisterShortenerServer(s grpc.ServiceRegistrar, srv ShortenerServer) {
 	s.RegisterService(&Shortener_ServiceDesc, srv)
 }
 
+// Foo.
 func _Shortener_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {

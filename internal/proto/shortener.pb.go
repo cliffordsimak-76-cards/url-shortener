@@ -20,6 +20,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Foo.
 type GetRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -28,6 +29,7 @@ type GetRequest struct {
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
+// Foo.
 func (x *GetRequest) Reset() {
 	*x = GetRequest{}
 	if protoimpl.UnsafeEnabled {
@@ -37,12 +39,15 @@ func (x *GetRequest) Reset() {
 	}
 }
 
+// Foo.
 func (x *GetRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
+// Foo.
 func (*GetRequest) ProtoMessage() {}
 
+// Foo.
 func (x *GetRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_shortener_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
@@ -60,6 +65,7 @@ func (*GetRequest) Descriptor() ([]byte, []int) {
 	return file_shortener_proto_rawDescGZIP(), []int{0}
 }
 
+// Foo.
 func (x *GetRequest) GetId() string {
 	if x != nil {
 		return x.Id
@@ -67,6 +73,7 @@ func (x *GetRequest) GetId() string {
 	return ""
 }
 
+// Foo.
 type GetResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -75,6 +82,7 @@ type GetResponse struct {
 	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
 }
 
+// Foo.
 func (x *GetResponse) Reset() {
 	*x = GetResponse{}
 	if protoimpl.UnsafeEnabled {
@@ -84,12 +92,15 @@ func (x *GetResponse) Reset() {
 	}
 }
 
+// Foo.
 func (x *GetResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
+// Foo.
 func (*GetResponse) ProtoMessage() {}
 
+// Foo.
 func (x *GetResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_shortener_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
@@ -107,6 +118,7 @@ func (*GetResponse) Descriptor() ([]byte, []int) {
 	return file_shortener_proto_rawDescGZIP(), []int{1}
 }
 
+// Foo.
 func (x *GetResponse) GetUrl() string {
 	if x != nil {
 		return x.Url
@@ -114,6 +126,7 @@ func (x *GetResponse) GetUrl() string {
 	return ""
 }
 
+// Foo.
 var File_shortener_proto protoreflect.FileDescriptor
 
 var file_shortener_proto_rawDesc = []byte{
