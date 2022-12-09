@@ -20,6 +20,8 @@ type Repository interface {
 	Get(context.Context, string) (*model.URL, error)
 	// GetAll.
 	GetAll(context.Context, string) ([]*model.URL, error)
+	// Stats.
+	GetStats(context.Context) (*Stats, error)
 }
 
 // Errors.

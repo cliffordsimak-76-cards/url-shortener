@@ -25,7 +25,7 @@ type InFile struct {
 func NewInFile(
 	filePath string,
 ) (Repository, error) {
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0777)
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0o777)
 	if err != nil {
 		return nil, err
 	}
@@ -120,4 +120,16 @@ func (s *InFile) UpdateBatch(
 	task workers.DeleteTask,
 ) error {
 	panic("implement me")
+}
+
+// Stats.
+func (s *InFile) GetStats(
+	ctx context.Context,
+) (*Stats, error) {
+	stats := &Stats{}
+	s.mutex.Lock()
+	stats.UsersCount = len(s.userCache)
+	stats.LinksCount = len(s.cache)
+	s.mutex.Unlock()
+	return stats, nil
 }

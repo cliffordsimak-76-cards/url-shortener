@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package shortener;
+
+option go_package = "yandex-praktikum/proto";
+
+service Shortener {
+  rpc Get(GetRequest) returns (GetResponse);
+}
+
+message GetRequest {
+  string id = 1;
+}
+
+message GetResponse {
+  string url = 1;
+}

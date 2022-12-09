@@ -32,6 +32,8 @@ type Config struct {
 	DatabaseDSN string `json:"database_dsn,omitempty" env:"DATABASE_DSN"`
 	// PprofAddress.
 	PprofAddress string `json:"pprof_address,omitempty" env:"PPROF_ADDRESS" envDefault:":6060"`
+	// Строковое представление бесклассовой адресации (CIDR).
+	TrustedSubnet string `json:"trusted_subnet,omitempty" env:"TRUSTED_SUBNET"`
 	// HTTPS в веб-сервере.
 	EnabledHTTPS bool `json:"enable_https,omitempty" env:"ENABLE_HTTPS"`
 	// Конфиг файл.
@@ -68,6 +70,7 @@ func parseFlags(cfg *Config) {
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "base URL for short link")
 	flag.StringVar(&cfg.FileStoragePath, "f", cfg.FileStoragePath, "file storage path")
 	flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "database address")
+	flag.StringVar(&cfg.TrustedSubnet, "t", cfg.TrustedSubnet, "sets trusted subnet for incoming requests")
 	flag.BoolVar(&cfg.EnabledHTTPS, "s", cfg.EnabledHTTPS, "enable https")
 	flag.Parse()
 }
@@ -109,6 +112,9 @@ func (cfg *Config) ParseConfigFile(name string) error {
 	}
 	if cfg.BaseURL == "" && configJSON.BaseURL != "" {
 		cfg.BaseURL = configJSON.BaseURL
+	}
+	if cfg.TrustedSubnet == "" && configJSON.TrustedSubnet != "" {
+		cfg.TrustedSubnet = configJSON.TrustedSubnet
 	}
 
 	return nil
