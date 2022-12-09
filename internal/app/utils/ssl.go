@@ -88,12 +88,12 @@ func CreateCert() error {
 		return fmt.Errorf("encode key PEM: %w", err)
 	}
 
-	err = os.WriteFile(CertFile, certPEM.Bytes(), 0777)
+	err = os.WriteFile(CertFile, certPEM.Bytes(), 0o777)
 	if err != nil {
 		return fmt.Errorf("save cert.pem: %w", err)
 	}
 
-	err = os.WriteFile(KeyFile, privateKeyPEM.Bytes(), 0777)
+	err = os.WriteFile(KeyFile, privateKeyPEM.Bytes(), 0o777)
 	if err != nil {
 		return fmt.Errorf("save key.pem: %w", err)
 	}
